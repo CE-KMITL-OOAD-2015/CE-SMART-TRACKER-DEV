@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import th.ac.kmitl.ce.ooad.cest.config.AppConfig;
-import th.ac.kmitl.ce.ooad.cest.dao.ICourseDao;
+import th.ac.kmitl.ce.ooad.cest.dao.course.ICourseDao;
 import th.ac.kmitl.ce.ooad.cest.entity.Course;
+import th.ac.kmitl.ce.ooad.cest.status.CreateCourseStatus;
 
 import java.util.List;
 
@@ -17,13 +18,20 @@ import java.util.List;
 public class CreateCourseController {
 
     @RequestMapping(method=RequestMethod.GET)
-    public @ResponseBody String request(
-            @RequestParam(value="courseId", required=true) String courseId,
-            @RequestParam(value="courseName", required=true) String courseName) {
+    public @ResponseBody CreateCourseStatus request(
+            @RequestParam(value="courseId", required=false) String courseId,
+            @RequestParam(value="courseName", required=false) String courseName) {
         return saveCourse(courseId, courseName);
     }
 
-    public String saveCourse(String courseId, String courseName) {
+    public CreateCourseStatus saveCourse(String courseId, String courseName) {
+        CreateCourseStatus status = new CreateCourseStatus();
+        if(courseId == null || courseName == null)
+        {
+            status.setMissingParameter();
+            return status;
+        }
+
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(AppConfig.class);
         ctx.refresh();
@@ -36,11 +44,14 @@ public class CreateCourseController {
             course.setCourseId(courseId);
             course.setCourseName(courseName);
             edao.saveCourse(course);
-            return "success";
+
+            status.setSuccess();
+            return status;
         }
         else
         {
-            return "duplicatedCourseId";
+            status.setDuplicatedCourseId();
+            return status;
         }
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import th.ac.kmitl.ce.ooad.cest.config.AppConfig;
-import th.ac.kmitl.ce.ooad.cest.dao.ICourseDao;
+import th.ac.kmitl.ce.ooad.cest.dao.course.ICourseDao;
 import th.ac.kmitl.ce.ooad.cest.entity.Course;
 
 import java.util.List;
