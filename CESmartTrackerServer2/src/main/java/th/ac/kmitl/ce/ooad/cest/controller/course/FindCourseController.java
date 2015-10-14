@@ -27,17 +27,26 @@ public class FindCourseController {
     public @ResponseBody
     List<Course> request(
             @RequestParam(value="courseId", required=false) String courseId,
-            @RequestParam(value="courseName", required=false) String courseName) {
-        return findCourse2(courseId, courseName);
+            @RequestParam(value="courseName", required=false) String courseName,
+            @RequestParam(value="keyword", required=false) String keyword) {
+        return findCourse2(courseId, courseName, keyword);
     }
 
-    public List<Course> findCourse2(String courseId, String courseName)
+    public List<Course> findCourse2(String courseId, String courseName, String keyword)
     {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.openSession();
         session.beginTransaction();
         Criteria cr = session.createCriteria(Course.class);
-        if(courseId != null)
+        if(keyword != null)
+        {
+            cr.add(Restrictions.or(
+                            Restrictions.eq("courseId", keyword), Restrictions.eq("courseName", keyword)
+            ));
+            List<Course> courses = cr.list();
+            return courses;
+        }
+        else if(courseId != null)
         {
             cr.add(Restrictions.eq("courseId", courseId));
             List<Course> courses = cr.list();

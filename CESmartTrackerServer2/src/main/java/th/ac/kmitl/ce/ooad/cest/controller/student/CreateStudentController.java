@@ -21,14 +21,16 @@ public class CreateStudentController {
     CreateStudentStatus request(
             @RequestParam(value="studentId", required=false) String studentId,
             @RequestParam(value="firstName", required=false) String firstName,
-            @RequestParam(value="lastName", required=false) String lastName) {
-        return saveStudent(studentId, firstName, lastName);
+            @RequestParam(value="lastName", required=false) String lastName,
+            @RequestParam(value="faculty", required=false) String faculty,
+            @RequestParam(value="department", required=false) String department) {
+        return saveStudent(studentId, firstName, lastName, faculty, department);
     }
     
-    CreateStudentStatus saveStudent(String studentId, String firstName, String lastName)
+    CreateStudentStatus saveStudent(String studentId, String firstName, String lastName, String faculty, String department)
     {
         CreateStudentStatus status = new CreateStudentStatus();
-        if(studentId == null || firstName == null || lastName == null)
+        if(studentId == null || firstName == null || lastName == null || faculty == null || department == null)
         {
             status.setMissingParameter();
             return status;
@@ -46,6 +48,8 @@ public class CreateStudentController {
             student.setStudentId(studentId);
             student.setFirstName(firstName);
             student.setLastName(lastName);
+            student.setFaculty(faculty);
+            student.setDepartment(department);
             edao.saveStudent(student);
 
             status.setSuccess();

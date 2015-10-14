@@ -15,6 +15,8 @@ public class Student {
     private String studentId;
     private String firstName;
     private String lastName;
+    private String faculty;
+    private String department;
 
     @JsonIgnore
     @ManyToMany(mappedBy="enrolledStudents")
@@ -77,6 +79,22 @@ public class Student {
 
     public Set<Course> getEnrolledCourses() {
         return enrolledCourses;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public void setEnrolledCourses(Set<Course> enrolledCourses) {

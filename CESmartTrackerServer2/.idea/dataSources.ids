@@ -12,8 +12,11 @@
       <column name="courseId" sqlType="VARCHAR" precision="20" scale="0" nullable="false" jdbcType="12"/>
       <column name="courseName" sqlType="VARCHAR" precision="100" scale="0" nullable="false" jdbcType="12"/>
       <column name="description" sqlType="VARCHAR" precision="500" scale="0" nullable="true" jdbcType="12"/>
+      <column name="faculty" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="department" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="courseDay" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="courseTime" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="courseDbId"/>
-      <index name="unique_courseId" unique="true" columns="courseId"/>
     </table>
     <table name="course2" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="courseDbId" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
@@ -22,6 +25,14 @@
       <column name="description" sqlType="VARCHAR" precision="500" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="courseDbId"/>
       <exported-key name="course_student2_ibfk_1" table="course_student2" schema="" catalog="ce_smart_tracker" columns="courseDbId"/>
+      <index name="unique_courseId" unique="true" columns="courseId"/>
+    </table>
+    <table name="course3" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="courseDbId" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="courseId" sqlType="VARCHAR" precision="20" scale="0" nullable="false" jdbcType="12"/>
+      <column name="courseName" sqlType="VARCHAR" precision="100" scale="0" nullable="false" jdbcType="12"/>
+      <column name="description" sqlType="VARCHAR" precision="500" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="courseDbId"/>
       <index name="unique_courseId" unique="true" columns="courseId"/>
     </table>
     <table name="course_student" schema="" catalog="ce_smart_tracker" type="TABLE">
@@ -34,7 +45,7 @@
       <column name="studentDbId" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="courseDbId,studentDbId"/>
       <foreign-key name="course_student2_ibfk_1" columns="courseDbId" ref-table="course2" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="courseDbId" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="course_student2_ibfk_2" columns="studentDbId" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="studentDbId" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="course_student2_ibfk_2" columns="studentDbId" ref-table="student2" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="studentDbId" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="department" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -64,6 +75,15 @@
       <column name="name" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
     </table>
     <table name="student" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="studentDbId" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="studentId" sqlType="VARCHAR" precision="20" scale="0" nullable="false" jdbcType="12"/>
+      <column name="firstName" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="lastName" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="faculty" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="department" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="studentDbId"/>
+    </table>
+    <table name="student2" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="studentDbId" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="studentId" sqlType="VARCHAR" precision="20" scale="0" nullable="false" jdbcType="12"/>
       <column name="firstName" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>

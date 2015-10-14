@@ -14,6 +14,10 @@ public class Course {
     private String courseId;
     private String courseName;
     private String description;
+    private String faculty;
+    private String department;
+    private String courseDay;
+    private String courseTime;
 
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL})
@@ -79,6 +83,38 @@ public class Course {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getCourseDay() {
+        return courseDay;
+    }
+
+    public void setCourseDay(String courseDay) {
+        this.courseDay = courseDay;
+    }
+
+    public String getCourseTime() {
+        return courseTime;
+    }
+
+    public void setCourseTime(String courseTime) {
+        this.courseTime = courseTime;
     }
 
     public Set<Student> getEnrolledStudents() {
