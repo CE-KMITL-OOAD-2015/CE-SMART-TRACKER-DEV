@@ -1,4 +1,6 @@
 package th.ac.kmitl.ce.ooad.cest.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +14,13 @@ public class Course {
     private String courseId;
     private String courseName;
     private String description;
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name="course_student",
+            joinColumns={@JoinColumn(name="courseDbId")},
+            inverseJoinColumns={@JoinColumn(name="studentDbId")})
+    private Set<Student> enrolledStudents = new HashSet<Student>();
 
     @Override
     public boolean equals(Object obj)
@@ -34,6 +43,10 @@ public class Course {
         {
             return false;
         }
+    }
+
+    public int getCourseDbId() {
+        return courseDbId;
     }
 
     public void setCourseDbId(int courseDbId) {
@@ -66,6 +79,14 @@ public class Course {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<Student> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
+    public void setEnrolledStudents(Set<Student> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 
 }
