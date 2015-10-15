@@ -1,4 +1,4 @@
-package th.ac.kmitl.ce.ooad.cest.controller.course;
+package th.ac.kmitl.ce.ooad.cest.controller.student;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -13,38 +13,38 @@ import th.ac.kmitl.ce.ooad.cest.HibernateUtil;
 import th.ac.kmitl.ce.ooad.cest.entity.Course;
 import th.ac.kmitl.ce.ooad.cest.entity.Student;
 
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Controller
-@RequestMapping("/viewEnrolledStudents")
-public class ViewEnrolledStudents {
-
+@RequestMapping("/viewEnrolledCourses")
+public class ViewEnrolledCourses {
     @RequestMapping(method= RequestMethod.GET)
     public @ResponseBody
-    Set<Student> request(
-            @RequestParam(value="courseId", required=true) String courseId) {
-        return getEnrolledStudents(courseId);
+    Set<Course> request(
+            @RequestParam(value="studentId", required=true) String studentId) {
+        return getEnrolledCourses(studentId);
     }
 
-    public Set<Student> getEnrolledStudents(String courseId)
+    Set<Course> getEnrolledCourses(String studentId)
     {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.openSession();
         session.beginTransaction();
-        Criteria cr = session.createCriteria(Course.class);
-        cr.add(Restrictions.eq("courseId", courseId));
-        List<Course> courses = cr.list();
-        if(courses.isEmpty())
+        Criteria cr = session.createCriteria(Student.class);
+        cr.add(Restrictions.eq("studentId", studentId));
+        List<Student> students = cr.list();
+        if(students.isEmpty())
         {
-            return (new HashSet<Student>());
+            return (new HashSet<Course>());
         }
         else
         {
-            Course course = courses.get(0);
-            Set<Student> students = course.getEnrolledStudents();
-            return students;
+            Student student = students.get(0);
+            Set<Course> courses = student.getEnrolledCourses();
+            return courses;
         }
     }
 }

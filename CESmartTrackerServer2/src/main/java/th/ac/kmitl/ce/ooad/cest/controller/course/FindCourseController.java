@@ -3,6 +3,7 @@ package th.ac.kmitl.ce.ooad.cest.controller.course;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Controller;
@@ -38,7 +39,7 @@ public class FindCourseController {
         if(keyword != null)
         {
             cr.add(Restrictions.or(
-                            Restrictions.eq("courseId", keyword), Restrictions.eq("courseName", keyword)
+                            Restrictions.like("courseId", keyword, MatchMode.ANYWHERE), Restrictions.like("courseName", keyword, MatchMode.ANYWHERE)
             ));
         }
         else if(courseId != null)
