@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="4288381144">
-    <data-source source="LOCAL" name="MySQL - ce_smart_tracker@128.199.101.200" uuid="989b7fc7-33ec-4be3-8f3d-df79a7acbfb5">
+  <component name="DataSourceManagerImpl" format="xml" hash="3977443966">
+    <data-source source="LOCAL" name="MySQL - ce_smart_tracker@128.199.101.200" uuid="457a9884-d296-417b-89c9-b4969fa571d8">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>

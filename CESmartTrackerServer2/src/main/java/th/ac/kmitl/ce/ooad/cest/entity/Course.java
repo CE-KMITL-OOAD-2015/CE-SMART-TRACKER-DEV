@@ -1,4 +1,6 @@
 package th.ac.kmitl.ce.ooad.cest.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +14,17 @@ public class Course {
     private String courseId;
     private String courseName;
     private String description;
+    private String faculty;
+    private String department;
+    private String courseDay;
+    private String courseTime;
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name="course_student",
+            joinColumns={@JoinColumn(name="courseDbId")},
+            inverseJoinColumns={@JoinColumn(name="studentDbId")})
+    private Set<Student> enrolledStudents = new HashSet<Student>();
 
     @Override
     public boolean equals(Object obj)
@@ -34,6 +47,10 @@ public class Course {
         {
             return false;
         }
+    }
+
+    public int getCourseDbId() {
+        return courseDbId;
     }
 
     public void setCourseDbId(int courseDbId) {
@@ -66,6 +83,46 @@ public class Course {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getCourseDay() {
+        return courseDay;
+    }
+
+    public void setCourseDay(String courseDay) {
+        this.courseDay = courseDay;
+    }
+
+    public String getCourseTime() {
+        return courseTime;
+    }
+
+    public void setCourseTime(String courseTime) {
+        this.courseTime = courseTime;
+    }
+
+    public Set<Student> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
+    public void setEnrolledStudents(Set<Student> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 
 }

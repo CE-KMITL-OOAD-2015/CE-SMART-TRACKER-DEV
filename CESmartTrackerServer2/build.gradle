@@ -21,7 +21,7 @@ jar {
     baseName = 'HelloJPA14'
     version = '0.0.1-SNAPSHOT'
     manifest {
-        attributes 'Main-Class': 'demo.HelloJpa14Application'
+        attributes 'Main-Class': 'th.ac.kmitl.ce.ooad.cest.CESmartTracker2Application'
     }
 }
 sourceCompatibility = 1.8
