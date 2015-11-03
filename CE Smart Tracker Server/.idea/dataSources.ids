@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - ce_smart_tracker_test@128.199.101.200" uuid="dd25c44f-d87d-467d-9ae2-1f10bfeece25">
+    <database-info product="MySQL" version="5.5.43-0ubuntu0.14.04.1" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <schema name="" catalog="ce_smart_tracker_test"/>
+    <table name="account" schema="" catalog="ce_smart_tracker_test" type="TABLE">
+      <column name="dtype" sqlType="VARCHAR" precision="31" scale="0" nullable="false" jdbcType="12"/>
+      <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="department" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="faculty" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="first_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="salt" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="session_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="student_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="username"/>
+      <exported-key name="FK_8a296nbwj01gkngak3ga78x53" table="course_student" schema="" catalog="ce_smart_tracker_test" columns="username"/>
+      <exported-key name="FK_jvumv0bo68wl48ok1twh1nt5x" table="course_teacher" schema="" catalog="ce_smart_tracker_test" columns="username"/>
+    </table>
+    <table name="course" schema="" catalog="ce_smart_tracker_test" type="TABLE">
+      <column name="course_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="course_day" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="course_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="course_time" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="department" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="description" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="faculty" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="course_id"/>
+      <exported-key name="FK_e7ecu73rf342itmbja59nci37" table="course_student" schema="" catalog="ce_smart_tracker_test" columns="course_id"/>
+      <exported-key name="FK_t6fblykqgqgehumwhvafeojny" table="course_teacher" schema="" catalog="ce_smart_tracker_test" columns="course_id"/>
+    </table>
+    <table name="course_student" schema="" catalog="ce_smart_tracker_test" type="TABLE">
+      <column name="course_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="course_id,username"/>
+      <foreign-key name="FK_e7ecu73rf342itmbja59nci37" columns="course_id" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker_test" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_8a296nbwj01gkngak3ga78x53" columns="username" ref-table="account" ref-schema="" ref-catalog="ce_smart_tracker_test" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_8a296nbwj01gkngak3ga78x53" unique="false" columns="username"/>
+    </table>
+    <table name="course_teacher" schema="" catalog="ce_smart_tracker_test" type="TABLE">
+      <column name="course_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="course_id,username"/>
+      <foreign-key name="FK_t6fblykqgqgehumwhvafeojny" columns="course_id" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker_test" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_jvumv0bo68wl48ok1twh1nt5x" columns="username" ref-table="account" ref-schema="" ref-catalog="ce_smart_tracker_test" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_jvumv0bo68wl48ok1twh1nt5x" unique="false" columns="username"/>
+    </table>
+    <table name="student" schema="" catalog="ce_smart_tracker_test" type="TABLE">
+      <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="department" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="faculty" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="first_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="salt" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="session_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="student_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="username"/>
+    </table>
+    <table name="teacher" schema="" catalog="ce_smart_tracker_test" type="TABLE">
+      <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="department" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="faculty" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="first_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="salt" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="session_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="username"/>
+    </table>
+  </data-source>
+</component>
