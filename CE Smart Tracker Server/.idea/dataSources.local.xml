@@ -7,5 +7,11 @@
       <schema-pattern>ce_smart_tracker_test.*</schema-pattern>
       <default-schemas>ce_smart_tracker_test.*</default-schemas>
     </data-source>
+    <data-source name="MySQL - ce_smart_tracker2@128.199.101.200" uuid="6b8b436a-7457-4919-92c8-9764e29184b2">
+      <secret-storage>master_key</secret-storage>
+      <user-name>cest1</user-name>
+      <schema-pattern>ce_smart_tracker2.*</schema-pattern>
+      <default-schemas>ce_smart_tracker2.*</default-schemas>
+    </data-source>
   </component>
 </project>

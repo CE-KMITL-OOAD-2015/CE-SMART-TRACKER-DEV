@@ -9,12 +9,9 @@ import java.util.Set;
 @Entity
 @Table(name="student")
 public class Student extends Account{
+
     @Column(nullable=false)
     private int studentId;
-    //@Id
-    ///@GeneratedValue(strategy = GenerationType.AUTO)
-    //private int studentDbId;
-
     @JsonIgnore
     @ManyToMany(mappedBy="enrolledStudents")
     private Set<Course> enrolledCourses = new HashSet<Course>();

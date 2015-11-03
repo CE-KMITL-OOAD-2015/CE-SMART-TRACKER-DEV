@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CourseRepository extends CrudRepository<Course, Long>{
     Course findFirstByCourseId(String courseId);
-    List<Course> findByCourseNameContainingOrCourseIdContaining(String courseName, String courseId);
+    List<Course> findByCourseNameContainingOrCourseIdContainingOrderByCourseNameAsc(String courseName, String courseId);
 }

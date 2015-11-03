@@ -7,7 +7,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "account")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Account {
+public class Account
+{
     @Id
     @Column(nullable = false)
     private String username;
@@ -46,67 +47,83 @@ public class Account {
     }
     */
 
-    public String getUsername() {
+    public String getUsername()
+    {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String username)
+    {
         this.username = username;
     }
 
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password)
+    {
         this.password = password;
     }
 
-    public String getSalt() {
+    public String getSalt()
+    {
         return salt;
     }
 
-    public void setSalt(String salt) {
+    public void setSalt(String salt)
+    {
         this.salt = salt;
     }
 
-    public String getSessionId() {
+    public String getSessionId()
+    {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
+    public void setSessionId(String sessionId)
+    {
         this.sessionId = sessionId;
     }
 
-    public String getFirstName() {
+    public String getFirstName()
+    {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName)
+    {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName)
+    {
         this.lastName = lastName;
     }
 
-    public String getFaculty() {
+    public String getFaculty()
+    {
         return faculty;
     }
 
-    public void setFaculty(String faculty) {
+    public void setFaculty(String faculty)
+    {
         this.faculty = faculty;
     }
 
-    public String getDepartment() {
+    public String getDepartment()
+    {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(String department)
+    {
         this.department = department;
     }
 }

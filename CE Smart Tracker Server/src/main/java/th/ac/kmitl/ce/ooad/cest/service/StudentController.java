@@ -17,7 +17,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 @Controller
-public class StudentController {
+public class StudentController
+{
 
     @Autowired
     StudentRepository studentRepository;
@@ -30,27 +31,50 @@ public class StudentController {
 
     @RequestMapping("/createStudent")
     @ResponseBody
-    public CreateStudentStatus requestCreateStudent(@RequestParam(value="username", required=true) String username,
-                   @RequestParam(value="password", required=true) String password,
-                   @RequestParam(value="studentId", required=true) int studentId,
-                   @RequestParam(value="firstName", required=true) String firstName,
-                   @RequestParam(value="lastName", required=true) String lastName,
-                   @RequestParam(value="faculty", required=true) String faculty,
-                   @RequestParam(value="department", required=false) String department)
+    public CreateStudentStatus requestCreateStudent(@RequestParam(value = "username", required = true) String username,
+                                                    @RequestParam(value = "password", required = true) String password,
+                                                    @RequestParam(value = "studentId", required = true) int studentId,
+                                                    @RequestParam(value = "firstName", required = true) String firstName,
+                                                    @RequestParam(value = "lastName", required = true) String lastName,
+                                                    @RequestParam(value = "faculty", required = true) String faculty,
+                                                    @RequestParam(value = "department", required = true) String department)
     {
         return createUser(username, password, studentId, firstName, lastName, faculty, department);
 
     }
 
-    private CreateStudentStatus createUser(String username, String password, int studentId, String firstName, String lastName, String faculty, String department) {
+    @RequestMapping("/viewEnrolledCourses")
+    @ResponseBody
+    public ViewEnrolledCoursesResponse requestViewEnrolledCourses(@RequestParam(value = "sessionId", required = true) String sessionId)
+    {
+        return viewEnrolledCourses(sessionId);
+    }
+
+    private ViewEnrolledCoursesResponse viewEnrolledCourses(String sessionId)
+    {
+        Student student = studentRepository.findFirstBySessionId(sessionId);
+        if (student != null)
+        {
+            ViewEnrolledCoursesResponse viewEnrolledCoursesResponse = new ViewEnrolledCoursesResponse(StatusEnum.SUCCESS);
+            viewEnrolledCoursesResponse.setEnrolledCourses(student.getEnrolledCourses());
+            return viewEnrolledCoursesResponse;
+        }
+        else
+        {
+            return new ViewEnrolledCoursesResponse(StatusEnum.INVALID_SESSION);
+        }
+    }
+
+    private CreateStudentStatus createUser(String username, String password, int studentId, String firstName, String lastName, String faculty, String department)
+    {
         try
         {
             //if(studentRepository.findFirstByUsername(username) != null || teacherRepository.findFirstByUsername(username) != null)
-            if(accountRepository.findFirstByUsername(username) != null)
+            if (accountRepository.findFirstByUsername(username) != null)
             {
                 return new CreateStudentStatus(CreateStudentStatusEnum.DUPLICATED_USERNAME);
             }
-            else if(!studentRepository.findByStudentId(studentId).isEmpty())
+            else if (!studentRepository.findByStudentId(studentId).isEmpty())
             {
                 return new CreateStudentStatus(CreateStudentStatusEnum.DUPLICATED_STUDENT_ID);
             }

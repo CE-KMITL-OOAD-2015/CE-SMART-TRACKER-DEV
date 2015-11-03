@@ -10,6 +10,9 @@ public class EnrollCourseStatus extends Status{
             case COURSE_NOT_FOUND:
                 this.status = "courseNotFound";
                 break;
+            case ALREADY_ENROLLED:
+                this.status = "alreadyEnrolled";
+                break;
             default:
                 this.status = "error";
         }

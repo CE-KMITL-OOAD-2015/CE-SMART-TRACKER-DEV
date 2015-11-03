@@ -89,11 +89,37 @@ public class CourseController
         {
             return new EnrollCourseStatus(EnrollCourseStatusEnum.COURSE_NOT_FOUND);
         }
+        else if(course.isEnrolled(student))
+        {
+            return new EnrollCourseStatus(EnrollCourseStatusEnum.ALREADY_ENROLLED);
+        }
         else
         {
             course.enroll(student);
             courseRepository.save(course);
             return new EnrollCourseStatus(StatusEnum.SUCCESS);
+        }
+    }
+
+    @RequestMapping("/viewRating")
+    @ResponseBody
+    public ViewRatingResponse requestViewRating(@RequestParam(value="courseId", required=true) String courseId)
+    {
+        return viewRating(courseId);
+    }
+
+    private ViewRatingResponse viewRating(String courseId)
+    {
+        Course course = courseRepository.findFirstByCourseId(courseId);
+        if(course == null)
+        {
+            return new ViewRatingResponse(ViewRatingResponseEnum.COURSE_NOT_FOUND);
+        }
+        else
+        {
+            ViewRatingResponse viewRatingResponse = new ViewRatingResponse(StatusEnum.SUCCESS);
+            viewRatingResponse.setAverageRating(course.getAverageRating());
+            return viewRatingResponse;
         }
     }
 
@@ -105,10 +131,50 @@ public class CourseController
 
     }
 
-
     private List<Course> findCourse(String keyword)
     {
-        return courseRepository.findByCourseNameContainingOrCourseIdContaining(keyword, keyword);
+        return courseRepository.findByCourseNameContainingOrCourseIdContainingOrderByCourseNameAsc(keyword, keyword);
+    }
+
+    @RequestMapping("/rateCourse")
+    @ResponseBody
+    public RateCourseResponse requestRateCourse(@RequestParam(value="sessionId", required=true) String sessionId,
+                                                @RequestParam(value="courseId", required=true) String courseId,
+                                                @RequestParam(value="point", required=true) int point)
+    {
+        return rateCourse(sessionId, courseId, point);
+
+    }
+
+    private RateCourseResponse rateCourse(String sessionId, String courseId, int point)
+    {
+        Student student = studentRepository.findFirstBySessionId(sessionId);
+        if(student == null)
+        {
+            return new RateCourseResponse(StatusEnum.INVALID_SESSION);
+        }
+
+        Course course = courseRepository.findFirstByCourseId(courseId);
+        if(course == null)
+        {
+            return new RateCourseResponse(RateCourseResponseEnum.COURSE_NOT_FOUND);
+        }
+        else if(!course.isEnrolled(student))
+        {
+            return new RateCourseResponse(RateCourseResponseEnum.NOT_ENROLLED);
+        }
+        /*
+        else if(course.isRated(student))
+        {
+            //return new RateCourseResponse(RateCourseResponseEnum.ALREADY_RATED);
+        }
+        */
+        else
+        {
+            course.addRating(student, point);
+            courseRepository.save(course);
+            return new RateCourseResponse(StatusEnum.SUCCESS);
+        }
     }
 
     @RequestMapping("/viewEnrolledStudents")
@@ -131,4 +197,72 @@ public class CourseController
             return null;
         }
     }
+
+    @RequestMapping("/viewCourseDetail")
+    @ResponseBody
+    public Course requestCourseDetail(@RequestParam(value="courseId", required=true) String courseId)
+    {
+        return viewCourseDetail(courseId);
+    }
+
+    private Course viewCourseDetail(String courseId)
+    {
+        return courseRepository.findFirstByCourseId(courseId);
+    }
+
+    @RequestMapping("/addAssignment")
+    @ResponseBody
+    public AddAssignmentResponse requestAddAssignment(@RequestParam(value="sessionId", required=true) String sessionId,
+                                                      @RequestParam(value="courseId", required=true) String courseId,
+                                                      @RequestParam(value="title", required=true) String title,
+                                                      @RequestParam(value="description", required=true) String description,
+                                                      @RequestParam(value="maxScore", required=true) float maxScore)
+    {
+        return addAssignment(sessionId, courseId, title, description, maxScore);
+    }
+
+
+    private AddAssignmentResponse addAssignment(String sessionId, String courseId, String title, String description, float maxScore)
+    {
+        Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
+        if(teacher == null)
+        {
+            return new AddAssignmentResponse(StatusEnum.INVALID_SESSION);
+        }
+
+        Course course = courseRepository.findFirstByCourseId(courseId);
+        if(course == null)
+        {
+            return new AddAssignmentResponse(AddAssignmentResponseEnum.COURSE_NOT_FOUND);
+        }
+        else if(!course.isTeaching(teacher))
+        {
+            return new AddAssignmentResponse(AddAssignmentResponseEnum.NOT_TEACHING);
+        }
+        else if(course.addAssignment(title, description, maxScore))
+        {
+            courseRepository.save(course);
+            return new AddAssignmentResponse(StatusEnum.SUCCESS);
+        }
+        else
+        {
+            return new AddAssignmentResponse(AddAssignmentResponseEnum.DUPLICATED_TITLE);
+        }
+
+        //assignmentDescriptionRepository.save(assignmentDescription);
+
+    }
+
+    /*
+    @RequestMapping("/changeScore")
+    @ResponseBody
+    public AddAssignmentResponse requestChangeScore(@RequestParam(value="sessionId", required=true) String sessionId,
+                                                      @RequestParam(value="courseId", required=true) String courseId,
+                                                      @RequestParam(value="title", required=true) String title,
+                                                      @RequestParam(value="description", required=true) String description,
+                                                      @RequestParam(value="maxScore", required=true) float maxScore)
+    {
+        return addAssignment(sessionId, courseId, title, description, maxScore);
+    }
+    */
 }

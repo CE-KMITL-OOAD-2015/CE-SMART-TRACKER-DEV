@@ -2,9 +2,6 @@ package th.ac.kmitl.ce.ooad.cest.service.response;
 
 public class Status {
     protected String status;
-    private String SUCCESS = "success";
-    private String MISSING_PARAMERTER = "missingParameter";
-    private String ERROR = "error";
 
     public Status()
     {
