@@ -5,19 +5,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import th.ac.kmitl.ce.ooad.cest.domain.Account;
 import th.ac.kmitl.ce.ooad.cest.domain.Student;
 import th.ac.kmitl.ce.ooad.cest.domain.Teacher;
-import th.ac.kmitl.ce.ooad.cest.repository.AccountRepository;
+import th.ac.kmitl.ce.ooad.cest.domain.User;
 import th.ac.kmitl.ce.ooad.cest.repository.StudentRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.TeacherRepository;
-import th.ac.kmitl.ce.ooad.cest.service.response.LoginStatus;
-import th.ac.kmitl.ce.ooad.cest.service.response.LoginStatusEnum;
-import th.ac.kmitl.ce.ooad.cest.service.response.StatusEnum;
-import th.ac.kmitl.ce.ooad.cest.util.CredentialUtil;
+import th.ac.kmitl.ce.ooad.cest.repository.UserRepository;
+import th.ac.kmitl.ce.ooad.cest.service.response.Response;
+import th.ac.kmitl.ce.ooad.cest.service.response.ResponseEnum;
+import th.ac.kmitl.ce.ooad.cest.util.HashingUtil;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -26,167 +24,205 @@ public class LoginController
 {
 
     @Autowired
-    StudentRepository studentRepository;
+    private StudentRepository studentRepository;
     @Autowired
-    TeacherRepository teacherRepository;
+    private TeacherRepository teacherRepository;
     @Autowired
-    AccountRepository accountRepository;
+    private UserRepository userRepository;
 
     @RequestMapping("/login")
     @ResponseBody
-    public LoginStatus requestCreateStudent(@RequestParam(value = "username", required = true) String username,
-                                            @RequestParam(value = "password", required = true) String password)
+    public LoginResponse requestLogin(@RequestParam(value = "username", required = true) String username,
+                                      @RequestParam(value = "password", required = true) String password)
     {
-        return checkLogin2(username, password);
+        return checkLogin(username.trim(), password);
     }
 
-    private LoginStatus checkLogin2(String username, String password)
+    private LoginResponse checkLogin(String username, String password)
     {
-        Account account = accountRepository.findFirstByUsername(username);
-        if (account != null)
+        User user = userRepository.findFirstByUsername(username);
+        if (user != null)
         {
             try
             {
-                if (CredentialUtil.validate(password, account.getPassword(), account.getSalt()))
+                if (HashingUtil.validate(password, user.getPassword(), user.getSalt()))
                 {
-                    LoginStatus loginStatus = new LoginStatus(StatusEnum.SUCCESS);
-                    if (account.getSessionId() != null)
+                    // password is valid
+                    LoginResponse loginResponse = new LoginResponse(ResponseEnum.SUCCESS);
+                    // generate session if not exist
+                    if (user.getSessionId() == null)
                     {
-                        loginStatus.setSessionId(account.getSessionId());
+                        String sessionId = generateSessionId();
+                        user.setSessionId(sessionId);
+                        userRepository.save(user);
+                        loginResponse.setSessionId(sessionId);
                     }
                     else
                     {
-                        String sessionId = generateSessionId();
-                        account.setSessionId(sessionId);
-                        accountRepository.save(account);
-                        loginStatus.setSessionId(sessionId);
+                        loginResponse.setSessionId(user.getSessionId());
                     }
-                    return loginStatus;
+                    // check user type
+                    Student student = studentRepository.findFirstByUsername(username);
+                    Teacher teacher = teacherRepository.findFirstByUsername(username);
+                    if(student !=  null)
+                    {
+                        loginResponse.setUserType("student");
+                        loginResponse.setStudent(student);
+                    }
+                    else if(teacher != null)
+                    {
+                        loginResponse.setUserType("teacher");
+                        loginResponse.setTeacher(teacher);
+                    }
+
+
+                    return loginResponse;
                 }
                 else
                 {
-                    return new LoginStatus(LoginStatusEnum.INVALID_PASSWORD);
+                    return new LoginResponse(ResponseEnum.INVALID_PASSWORD);
                 }
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                return new LoginStatus(StatusEnum.ERROR);
+                return new LoginResponse(ResponseEnum.ERROR);
             }
             catch (NoSuchAlgorithmException e)
             {
                 e.printStackTrace();
-                return new LoginStatus(StatusEnum.ERROR);
+                return new LoginResponse(ResponseEnum.ERROR);
             }
         }
         else
         {
-            return new LoginStatus(LoginStatusEnum.USERNAME_NOT_FOUND);
+            return new LoginResponse(ResponseEnum.USERNAME_NOT_FOUND);
         }
     }
 
     private String generateSessionId() throws NoSuchAlgorithmException
     {
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        byte[] bSessionId;
         String sSessionId;
-
+        // loop until get a unique sessionId
         do
         {
-            bSessionId = new byte[8];
+            byte[] bSessionId = new byte[8];
             random.nextBytes(bSessionId);
-            sSessionId = CredentialUtil.byteToBase64(bSessionId);
+            sSessionId = HashingUtil.byteToBase64(bSessionId);
         }
-        while (studentRepository.findFirstBySessionId(sSessionId) != null ||
-                teacherRepository.findFirstBySessionId(sSessionId) != null);
-
+        while(userRepository.findFirstBySessionId(sSessionId) != null);
         return sSessionId;
     }
 
-    /*private LoginStatus checkLogin(String username, String password)
+    @RequestMapping("/loginWithFacebook")
+    @ResponseBody
+    public LoginResponse requestLoginWithFacebook(@RequestParam(value = "facebookId", required = true) String facebookId)
     {
-        Student student = studentRepository.findFirstByUsername(username);
-        Teacher teacher = teacherRepository.findFirstByUsername(username);
-        try
-        {
-            if (student != null)
-            {
-                if (CredentialUtil.validate(password, student.getPassword(), student.getSalt()))
-                {
-                    LoginStatus loginStatus = new LoginStatus(StatusEnum.SUCCESS);
-                    if (student.getSessionId() != null)
-                    {
-                        loginStatus.setSessionId(student.getSessionId());
-                    }
-                    else
-                    {
-                        String sessionId = generateSessionId();
-                        student.setSessionId(sessionId);
-                        studentRepository.save(student);
-                        loginStatus.setSessionId(sessionId);
-                    }
-                    return loginStatus;
-                }
-                else
-                {
-                    return new LoginStatus(LoginStatusEnum.INVALID_PASSWORD);
-                }
-            }
-            else if (teacher != null)
-            {
-                try
-                {
-                    if (CredentialUtil.validate(password, teacher.getPassword(), teacher.getSalt()))
-                    {
-                        LoginStatus loginStatus = new LoginStatus(StatusEnum.SUCCESS);
-                        if (teacher.getSessionId() != null)
-                        {
-                            loginStatus.setSessionId(teacher.getSessionId());
-                        }
-                        else
-                        {
-                            String sessionId = generateSessionId();
-                            teacher.setSessionId(sessionId);
-                            teacherRepository.save(teacher);
-                            loginStatus.setSessionId(sessionId);
-                        }
-                        return loginStatus;
-                    }
-                    else
-                    {
-                        return new LoginStatus(LoginStatusEnum.INVALID_PASSWORD);
-                    }
-                }
-                catch (NoSuchAlgorithmException e)
-                {
-                    return new LoginStatus(StatusEnum.ERROR);
-                }
-                catch (UnsupportedEncodingException e)
-                {
-                    return new LoginStatus(StatusEnum.ERROR);
-                }
-                catch (IOException e)
-                {
-                    return new LoginStatus(StatusEnum.ERROR);
-                }
-            }
-            else
-            {
-                return new LoginStatus(LoginStatusEnum.USERNAME_NOT_FOUND);
-            }
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            return new LoginStatus(StatusEnum.ERROR);
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            return new LoginStatus(StatusEnum.ERROR);
-        }
-        catch (IOException e)
-        {
-            return new LoginStatus(StatusEnum.ERROR);
-        }
-    }*/
+        return checkLogin(facebookId);
+    }
 
+    private LoginResponse checkLogin(String facebookId)
+    {
+        if(facebookId == null || facebookId == "")
+        {
+            return new LoginResponse(ResponseEnum.FACEBOOK_ID_NOT_FOUND);
+        }
+        User user = userRepository.findFirstByFacebookId(facebookId);
+        if(user == null)
+        {
+            return new LoginResponse(ResponseEnum.FACEBOOK_ID_NOT_FOUND);
+        }
+        if (user.getSessionId() == null)
+        {
+            try
+            {
+                user.setSessionId(generateSessionId());
+                userRepository.save(user);
+            }
+            catch (NoSuchAlgorithmException e)
+            {
+                return new LoginResponse(ResponseEnum.ERROR);
+            }
+        }
+
+        Student student = studentRepository.findFirstByFacebookId(facebookId);
+        Teacher teacher = teacherRepository.findFirstByFacebookId(facebookId);
+
+        if(student != null)
+        {
+            return new LoginResponse(ResponseEnum.SUCCESS, student.getSessionId(), student);
+        }
+        else
+        {
+            return new LoginResponse(ResponseEnum.SUCCESS, teacher.getSessionId(), teacher);
+        }
+    }
+
+    private class LoginResponse extends Response
+    {
+        private String sessionId;
+        private String userType;
+        private Teacher teacher;
+        private Student student;
+
+        public LoginResponse(ResponseEnum responseEnum)
+        {
+            super(responseEnum);
+        }
+
+        public LoginResponse(ResponseEnum responseEnum, String sessionId, Teacher teacher)
+        {
+            super(responseEnum);
+            this.sessionId = sessionId;
+            this.userType = "teacher";
+            this.teacher = teacher;
+        }
+
+        public LoginResponse(ResponseEnum responseEnum, String sessionId, Student student)
+        {
+            super(responseEnum);
+            this.sessionId = sessionId;
+            this.userType = "student";
+            this.student = student;
+        }
+
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public void setSessionId(String sessionId) {
+            this.sessionId = sessionId;
+        }
+
+        public String getUserType()
+        {
+            return userType;
+        }
+
+        public void setUserType(String userType)
+        {
+            this.userType = userType;
+        }
+
+        public Teacher getTeacher()
+        {
+            return teacher;
+        }
+
+        public void setTeacher(Teacher teacher)
+        {
+            this.teacher = teacher;
+        }
+
+        public Student getStudent()
+        {
+            return student;
+        }
+
+        public void setStudent(Student student)
+        {
+            this.student = student;
+        }
+    }
 }

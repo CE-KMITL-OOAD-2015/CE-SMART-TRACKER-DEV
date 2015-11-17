@@ -1,5 +1,9 @@
 package th.ac.kmitl.ce.ooad.cest.domain;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +15,8 @@ public class AssignmentDescription
     private long id;
     private String title;
     private String description;
-    private float maxScore;
+    private double maxScore;
+    private DateTime dueDate;
 
     @Override
     public boolean equals(Object obj)
@@ -26,14 +31,7 @@ public class AssignmentDescription
         }
 
         AssignmentDescription assignmentDescription2 = (AssignmentDescription) obj;
-        if(this.title.equals(assignmentDescription2.getTitle()))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return this.title.equals(assignmentDescription2.getTitle());
     }
 
     public long getId()
@@ -66,13 +64,24 @@ public class AssignmentDescription
         this.description = description;
     }
 
-    public float getMaxScore()
+    public double getMaxScore()
     {
         return maxScore;
     }
 
-    public void setMaxScore(float maxScore)
+    public void setMaxScore(double maxScore)
     {
         this.maxScore = maxScore;
+    }
+
+    public String getDueDate()
+    {
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm:ss");
+        return fmt.print(dueDate);
+    }
+
+    public void setDueDate(DateTime dueDate)
+    {
+        this.dueDate = dueDate;
     }
 }

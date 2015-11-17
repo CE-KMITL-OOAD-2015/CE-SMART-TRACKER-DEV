@@ -34,6 +34,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('commons-dbcp:commons-dbcp')
+    compile('joda-time:joda-time')
+    compile('org.jadira.usertype:usertype.core:3.2.0.GA')
     runtime('mysql:mysql-connector-java')
     testCompile('org.springframework.boot:spring-boot-starter-test') 
 }

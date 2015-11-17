@@ -10,10 +10,10 @@ import java.util.Set;
 
 @Entity
 @Table(name="teacher")
-public class Teacher extends Account
+public class Teacher extends User
 {
     @JsonIgnore
-    @ManyToMany(mappedBy="enrolledStudents")
+    @ManyToMany(mappedBy="teachers")
     private Set<Course> teachingCourses = new HashSet<Course>();
 
     public Teacher()

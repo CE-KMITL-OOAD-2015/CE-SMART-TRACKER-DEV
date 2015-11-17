@@ -5,14 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import th.ac.kmitl.ce.ooad.cest.domain.Course;
-import th.ac.kmitl.ce.ooad.cest.domain.Student;
-import th.ac.kmitl.ce.ooad.cest.domain.Teacher;
+import th.ac.kmitl.ce.ooad.cest.domain.*;
 import th.ac.kmitl.ce.ooad.cest.repository.CourseRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.StudentRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.TeacherRepository;
 import th.ac.kmitl.ce.ooad.cest.service.response.*;
 
+
+import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,37 +22,41 @@ public class CourseController
 {
 
     @Autowired
-    StudentRepository studentRepository;
+    private StudentRepository studentRepository;
     @Autowired
-    TeacherRepository teacherRepository;
+    private TeacherRepository teacherRepository;
     @Autowired
-    CourseRepository courseRepository;
+    private CourseRepository courseRepository;
 
     @RequestMapping("/createCourse")
     @ResponseBody
-    public Status requestCreateCourse(@RequestParam(value="sessionId", required=true) String sessionId,
+    public Response requestCreateCourse(@RequestParam(value="sessionId", required=true) String sessionId,
                                       @RequestParam(value="courseId", required=true) String courseId,
                                       @RequestParam(value="courseName", required=true) String courseName,
-                                      @RequestParam(value="faculty", required=true) String faculty,
-                                      @RequestParam(value="description", required=false) String description,
-                                      @RequestParam(value="department", required=false) String department,
-                                      @RequestParam(value="courseDay", required=false) String courseDay,
+                                      @RequestParam(value="faculty", required=true) Faculty faculty,
+                                      @RequestParam(value="description", required=false, defaultValue = "") String description,
+                                      @RequestParam(value="department", required=false, defaultValue = "") String department,
+                                      @RequestParam(value="courseDay", required=true) DayOfWeek courseDay,
                                       @RequestParam(value="courseTime", required=false) String courseTime)
     {
-        return createCourse(sessionId, courseId, courseName, faculty, description, department, courseDay, courseTime);
+        return createCourse(sessionId.trim(), courseId.trim(), courseName.trim(), faculty, description.trim(), department.trim(), courseDay, courseTime.trim());
 
     }
 
-    private Status createCourse(String sessionId, String courseId, String courseName, String faculty, String description, String department, String courseDay, String courseTime)
+    private Response createCourse(String sessionId, String courseId, String courseName, Faculty faculty, String description, String department, DayOfWeek courseDay, String courseTime)
     {
         Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
         if(teacher == null)
         {
-            return new Status(StatusEnum.INVALID_SESSION);
+            return new Response(ResponseEnum.INVALID_SESSION);
         }
         else if(courseRepository.findFirstByCourseId(courseId) != null)
         {
-            return new CreateCourseStatus(CreateCourseStatusEnum.DUPLICATED_COURSE_ID);
+            return new Response(ResponseEnum.DUPLICATED_COURSE_ID);
+        }
+        else if(courseRepository.findFirstByCourseName(courseName) != null)
+        {
+            return new Response(ResponseEnum.DUPLICATED_COURSE_NAME);
         }
         else
         {
@@ -63,63 +68,76 @@ public class CourseController
             course.setDescription(description);
             course.setCourseDay(courseDay);
             course.setCourseTime(courseTime);
+            courseRepository.save(course);
+            course = courseRepository.findFirstByCourseId(courseId);
             course.getTeachers().add(teacher);
             courseRepository.save(course);
-            return new CreateCourseStatus(StatusEnum.SUCCESS);
+            return new Response(ResponseEnum.SUCCESS);
         }
     }
 
     @RequestMapping("/enrollCourse")
     @ResponseBody
-    public EnrollCourseStatus requestEnrollCourse(@RequestParam(value="sessionId", required=true) String sessionId,
-                                                  @RequestParam(value="courseId", required=true) String courseId)
+    public Response requestEnrollCourse(@RequestParam(value="sessionId", required=true) String sessionId,
+                                        @RequestParam(value="courseId", required=true) String courseId)
     {
-        return enrollCourse(sessionId, courseId);
+        return enrollCourse(sessionId.trim(), courseId.trim());
     }
 
-    private EnrollCourseStatus enrollCourse(String sessionId, String courseId)
+    private Response enrollCourse(String sessionId, String courseId)
     {
         Student student = studentRepository.findFirstBySessionId(sessionId);
         Course course = courseRepository.findFirstByCourseId(courseId);
         if(student == null)
         {
-            return new EnrollCourseStatus(StatusEnum.INVALID_SESSION);
+            return new Response(ResponseEnum.INVALID_SESSION);
         }
         else if(course == null)
         {
-            return new EnrollCourseStatus(EnrollCourseStatusEnum.COURSE_NOT_FOUND);
+            return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
         else if(course.isEnrolled(student))
         {
-            return new EnrollCourseStatus(EnrollCourseStatusEnum.ALREADY_ENROLLED);
+            return new Response(ResponseEnum.ALREADY_ENROLLED);
         }
         else
         {
             course.enroll(student);
             courseRepository.save(course);
-            return new EnrollCourseStatus(StatusEnum.SUCCESS);
+            return new Response(ResponseEnum.SUCCESS);
         }
     }
 
-    @RequestMapping("/viewRating")
+    @RequestMapping("/dropCourse")
     @ResponseBody
-    public ViewRatingResponse requestViewRating(@RequestParam(value="courseId", required=true) String courseId)
+    public Response requestDropCourse(@RequestParam(value="sessionId", required=true) String sessionId,
+                                      @RequestParam(value="courseId", required=true) String courseId)
     {
-        return viewRating(courseId);
+        return dropCourse(sessionId.trim(), courseId.trim());
     }
 
-    private ViewRatingResponse viewRating(String courseId)
+    private Response dropCourse(String sessionId, String courseId)
     {
+        Student student = studentRepository.findFirstBySessionId(sessionId);
+        if(student == null)
+        {
+            return new Response(ResponseEnum.INVALID_SESSION);
+        }
+
         Course course = courseRepository.findFirstByCourseId(courseId);
         if(course == null)
         {
-            return new ViewRatingResponse(ViewRatingResponseEnum.COURSE_NOT_FOUND);
+            return new Response(ResponseEnum.COURSE_NOT_FOUND);
+        }
+        else if(!course.isEnrolled(student))
+        {
+            return new Response(ResponseEnum.NOT_ENROLLED);
         }
         else
         {
-            ViewRatingResponse viewRatingResponse = new ViewRatingResponse(StatusEnum.SUCCESS);
-            viewRatingResponse.setAverageRating(course.getAverageRating());
-            return viewRatingResponse;
+            course.drop(student);
+            courseRepository.save(course);
+            return new Response(ResponseEnum.SUCCESS);
         }
     }
 
@@ -128,7 +146,6 @@ public class CourseController
     public List<Course> requestFindCourse(@RequestParam(value="keyword", required=false, defaultValue="") String keyword)
     {
         return findCourse(keyword);
-
     }
 
     private List<Course> findCourse(String keyword)
@@ -136,44 +153,47 @@ public class CourseController
         return courseRepository.findByCourseNameContainingOrCourseIdContainingOrderByCourseNameAsc(keyword, keyword);
     }
 
-    @RequestMapping("/rateCourse")
+    @RequestMapping("/findCourseByFaculty")
     @ResponseBody
-    public RateCourseResponse requestRateCourse(@RequestParam(value="sessionId", required=true) String sessionId,
-                                                @RequestParam(value="courseId", required=true) String courseId,
-                                                @RequestParam(value="point", required=true) int point)
+    public List<Course> requestFindCourseByFaculty(@RequestParam(value="faculty", required=true) Faculty faculty)
     {
-        return rateCourse(sessionId, courseId, point);
-
+        return findCourseByFaculty(faculty);
     }
 
-    private RateCourseResponse rateCourse(String sessionId, String courseId, int point)
+    private List<Course> findCourseByFaculty(Faculty faculty)
+    {
+        return courseRepository.findByFacultyOrderByCourseNameAsc(faculty);
+    }
+
+    @RequestMapping("/findCourseByDepartment")
+    @ResponseBody
+    public List<Course> requestFindCourseByDepartment(@RequestParam(value="department", required=false, defaultValue="") String department)
+    {
+        return findCourseByDepartment(department);
+    }
+
+    private List<Course> findCourseByDepartment(String department)
+    {
+        return courseRepository.findByDepartmentOrderByCourseNameAsc(department);
+    }
+
+    @RequestMapping("/findRecommendedCourse")
+    @ResponseBody
+    public List<Course> requestFindRecommendedCourse(@RequestParam(value="sessionId", required=true) String sessionId)
+    {
+        return findRecommendedCourse(sessionId);
+    }
+
+    private List<Course> findRecommendedCourse(String sessionId)
     {
         Student student = studentRepository.findFirstBySessionId(sessionId);
-        if(student == null)
+        if(student != null)
         {
-            return new RateCourseResponse(StatusEnum.INVALID_SESSION);
+            return courseRepository.findByFacultyAndDepartmentOrNone(student.getFaculty(), student.getDepartment());
         }
-
-        Course course = courseRepository.findFirstByCourseId(courseId);
-        if(course == null)
-        {
-            return new RateCourseResponse(RateCourseResponseEnum.COURSE_NOT_FOUND);
-        }
-        else if(!course.isEnrolled(student))
-        {
-            return new RateCourseResponse(RateCourseResponseEnum.NOT_ENROLLED);
-        }
-        /*
-        else if(course.isRated(student))
-        {
-            //return new RateCourseResponse(RateCourseResponseEnum.ALREADY_RATED);
-        }
-        */
         else
         {
-            course.addRating(student, point);
-            courseRepository.save(course);
-            return new RateCourseResponse(StatusEnum.SUCCESS);
+            return new ArrayList<Course>(); // return empty list
         }
     }
 
@@ -181,7 +201,7 @@ public class CourseController
     @ResponseBody
     public Set<Student> requestViewEnrolledStudents(@RequestParam(value="courseId", required=true) String courseId)
     {
-        return viewEnrolledStudents(courseId);
+        return viewEnrolledStudents(courseId.trim());
     }
 
 
@@ -198,11 +218,32 @@ public class CourseController
         }
     }
 
+    @RequestMapping("/viewTeachers")
+    @ResponseBody
+    public Set<Teacher> requestViewTeachers(@RequestParam(value="courseId", required=true) String courseId)
+    {
+        return viewTeachers(courseId.trim());
+    }
+
+
+    private Set<Teacher> viewTeachers(String courseId)
+    {
+        Course course = courseRepository.findFirstByCourseId(courseId);
+        if(course != null)
+        {
+            return course.getTeachers();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     @RequestMapping("/viewCourseDetail")
     @ResponseBody
     public Course requestCourseDetail(@RequestParam(value="courseId", required=true) String courseId)
     {
-        return viewCourseDetail(courseId);
+        return viewCourseDetail(courseId.trim());
     }
 
     private Course viewCourseDetail(String courseId)
@@ -210,59 +251,12 @@ public class CourseController
         return courseRepository.findFirstByCourseId(courseId);
     }
 
-    @RequestMapping("/addAssignment")
+
+    @RequestMapping("/test")
     @ResponseBody
-    public AddAssignmentResponse requestAddAssignment(@RequestParam(value="sessionId", required=true) String sessionId,
-                                                      @RequestParam(value="courseId", required=true) String courseId,
-                                                      @RequestParam(value="title", required=true) String title,
-                                                      @RequestParam(value="description", required=true) String description,
-                                                      @RequestParam(value="maxScore", required=true) float maxScore)
+    public List<Course> requestTest(@RequestParam(value = "text", required = false)String text)
     {
-        return addAssignment(sessionId, courseId, title, description, maxScore);
+        return courseRepository.findByFacultyAndDepartmentOrNone(Faculty.ENGINEERING, "computer");
     }
 
-
-    private AddAssignmentResponse addAssignment(String sessionId, String courseId, String title, String description, float maxScore)
-    {
-        Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
-        if(teacher == null)
-        {
-            return new AddAssignmentResponse(StatusEnum.INVALID_SESSION);
-        }
-
-        Course course = courseRepository.findFirstByCourseId(courseId);
-        if(course == null)
-        {
-            return new AddAssignmentResponse(AddAssignmentResponseEnum.COURSE_NOT_FOUND);
-        }
-        else if(!course.isTeaching(teacher))
-        {
-            return new AddAssignmentResponse(AddAssignmentResponseEnum.NOT_TEACHING);
-        }
-        else if(course.addAssignment(title, description, maxScore))
-        {
-            courseRepository.save(course);
-            return new AddAssignmentResponse(StatusEnum.SUCCESS);
-        }
-        else
-        {
-            return new AddAssignmentResponse(AddAssignmentResponseEnum.DUPLICATED_TITLE);
-        }
-
-        //assignmentDescriptionRepository.save(assignmentDescription);
-
-    }
-
-    /*
-    @RequestMapping("/changeScore")
-    @ResponseBody
-    public AddAssignmentResponse requestChangeScore(@RequestParam(value="sessionId", required=true) String sessionId,
-                                                      @RequestParam(value="courseId", required=true) String courseId,
-                                                      @RequestParam(value="title", required=true) String title,
-                                                      @RequestParam(value="description", required=true) String description,
-                                                      @RequestParam(value="maxScore", required=true) float maxScore)
-    {
-        return addAssignment(sessionId, courseId, title, description, maxScore);
-    }
-    */
 }

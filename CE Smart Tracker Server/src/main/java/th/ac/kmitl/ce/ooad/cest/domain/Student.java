@@ -8,7 +8,8 @@ import java.util.Set;
 
 @Entity
 @Table(name="student")
-public class Student extends Account{
+public class Student extends User
+{
 
     @Column(nullable=false)
     private int studentId;

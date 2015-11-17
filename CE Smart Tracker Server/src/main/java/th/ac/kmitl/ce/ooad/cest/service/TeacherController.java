@@ -6,50 +6,60 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import th.ac.kmitl.ce.ooad.cest.domain.Course;
-import th.ac.kmitl.ce.ooad.cest.domain.Student;
+import th.ac.kmitl.ce.ooad.cest.domain.Faculty;
 import th.ac.kmitl.ce.ooad.cest.domain.Teacher;
 import th.ac.kmitl.ce.ooad.cest.repository.CourseRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.StudentRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.TeacherRepository;
-import th.ac.kmitl.ce.ooad.cest.service.response.*;
-import th.ac.kmitl.ce.ooad.cest.util.CredentialUtil;
+import th.ac.kmitl.ce.ooad.cest.repository.UserRepository;
+import th.ac.kmitl.ce.ooad.cest.service.response.Response;
+import th.ac.kmitl.ce.ooad.cest.service.response.ResponseEnum;
+import th.ac.kmitl.ce.ooad.cest.util.HashingUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 @Controller
 public class TeacherController {
 
     @Autowired
-    StudentRepository studentRepository;
+    private UserRepository userRepository;
     @Autowired
-    TeacherRepository teacherRepository;
+    private StudentRepository studentRepository;
     @Autowired
-    CourseRepository courseRepository;
+    private TeacherRepository teacherRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
     @RequestMapping("/createTeacher")
     @ResponseBody
-    public CreateStudentStatus requestCreateStudent(@RequestParam(value="username", required=true) String username,
-                                                       @RequestParam(value="password", required=true) String password,
-                                                       @RequestParam(value="firstName", required=true) String firstName,
-                                                       @RequestParam(value="lastName", required=true) String lastName,
-                                                       @RequestParam(value="faculty", required=true) String faculty,
-                                                       @RequestParam(value="department", required=false) String department)
+    public Response requestCreateStudent(@RequestParam(value="username", required=true) String username,
+                                         @RequestParam(value="password", required=true) String password,
+                                         @RequestParam(value="firstName", required=true) String firstName,
+                                         @RequestParam(value="lastName", required=true) String lastName,
+                                         @RequestParam(value="faculty", required=true) Faculty faculty,
+                                         @RequestParam(value="department", required=false, defaultValue = "") String department,
+                                         @RequestParam(value = "facebookId", required=false, defaultValue = "") String facebookId)
     {
-        return createTeacher(username, password, firstName, lastName, faculty, department);
+        return createTeacher(username.trim(), password, firstName.trim(), lastName.trim(), faculty, department.trim(), facebookId.trim());
 
     }
 
-    private CreateStudentStatus createTeacher(String username, String password, String firstName, String lastName, String faculty, String department) {
+    private Response createTeacher(String username, String password, String firstName, String lastName, Faculty faculty, String department, String facebookId) {
         try
         {
-            if(studentRepository.findFirstByUsername(username) != null || teacherRepository.findFirstByUsername(username) != null)
+            if (userRepository.findFirstByUsername(username) != null)
             {
-                return new CreateStudentStatus(CreateStudentStatusEnum.DUPLICATED_USERNAME);
+                return new Response(ResponseEnum.DUPLICATED_USERNAME);
+            }
+            else if(userRepository.findFirstByFacebookId(facebookId) != null)
+            {
+                return new Response(ResponseEnum.DUPLICATED_FACEBOOK_ID);
             }
             else
             {
-                String[] results = CredentialUtil.hashPassword(password);
+                String[] results = HashingUtil.hashPassword(password);
                 Teacher teacher = new Teacher();
                 teacher.setUsername(username);
                 teacher.setPassword(results[0]);
@@ -57,18 +67,59 @@ public class TeacherController {
                 teacher.setFirstName(firstName);
                 teacher.setLastName(lastName);
                 teacher.setFaculty(faculty);
+                teacher.setDepartment(department);
+                teacher.setFacebookId(facebookId);
                 teacherRepository.save(teacher);
-                return new CreateStudentStatus(StatusEnum.SUCCESS);
+                return new Response(ResponseEnum.SUCCESS);
             }
         }
         catch (NoSuchAlgorithmException e)
         {
-            return new CreateStudentStatus(StatusEnum.ERROR);
+            return new Response(ResponseEnum.ERROR);
         }
         catch (UnsupportedEncodingException e)
         {
-            return new CreateStudentStatus(StatusEnum.ERROR);
+            return new Response(ResponseEnum.ERROR);
         }
     }
 
+    @RequestMapping("/viewTeachingCourses")
+    @ResponseBody
+    public ViewTeachingCoursesResponse requestViewEnrolledCourses(@RequestParam(value = "sessionId", required = true) String sessionId)
+    {
+        return viewTeachingCourses(sessionId.trim());
+    }
+
+    private ViewTeachingCoursesResponse viewTeachingCourses(String sessionId)
+    {
+        Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
+        if (teacher != null)
+        {
+            ViewTeachingCoursesResponse viewTeachingCoursesResponse = new ViewTeachingCoursesResponse(ResponseEnum.SUCCESS);
+            viewTeachingCoursesResponse.setTeachingCourses(teacher.getTeachingCourses());
+            return viewTeachingCoursesResponse;
+        }
+        else
+        {
+            return new ViewTeachingCoursesResponse(ResponseEnum.INVALID_SESSION);
+        }
+    }
+
+    private class ViewTeachingCoursesResponse extends Response
+    {
+        private Set<Course> teachingCourses;
+
+        public Set<Course> getTeachingCourses() {
+            return teachingCourses;
+        }
+
+        public void setTeachingCourses(Set<Course> teachingCourses) {
+            this.teachingCourses = teachingCourses;
+        }
+
+        public ViewTeachingCoursesResponse(ResponseEnum responseEnum)
+        {
+            super(responseEnum);
+        }
+    }
 }

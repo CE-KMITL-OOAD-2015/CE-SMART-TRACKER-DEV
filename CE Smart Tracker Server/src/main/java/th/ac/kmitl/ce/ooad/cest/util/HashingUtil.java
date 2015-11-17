@@ -1,18 +1,22 @@
-package th.ac.kmitl.ce.ooad.cest.util;
+/**
+ *
+ * modified from https://www.owasp.org/index.php/Hashing_Java
+ *
+ */
 
+package th.ac.kmitl.ce.ooad.cest.util;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class CredentialUtil {
+public class HashingUtil
+{
     public static final int ITERATION_NUMBER = 1000;
     /**
      * From a password, a number of iterations and a salt,
@@ -43,7 +47,7 @@ public class CredentialUtil {
      * @return byte[]
      * @throws IOException
      */
-    public static byte[] base64ToByte(String data) throws IOException
+    public static byte[] base64ToByte(String data)
     {
         //Base64.Decoder decoder = new Base64.Decoder().
         return Base64.getDecoder().decode(data);
@@ -71,8 +75,8 @@ public class CredentialUtil {
         random.nextBytes(bSalt);
         // Digest computation
         byte[] bDigest = getHash(ITERATION_NUMBER, password, bSalt);
-        String sDigest = CredentialUtil.byteToBase64(bDigest);
-        String sSalt = CredentialUtil.byteToBase64(bSalt);
+        String sDigest = HashingUtil.byteToBase64(bDigest);
+        String sSalt = HashingUtil.byteToBase64(bSalt);
         String[] results = new String[2];
         results[0] = sDigest;
         results[1] = sSalt;
@@ -80,16 +84,9 @@ public class CredentialUtil {
     }
 
     public static boolean validate(String proposedPassword, String dbPassword, String salt) throws IOException, NoSuchAlgorithmException {
-        byte[] bDigest = CredentialUtil.base64ToByte(dbPassword);
-        byte[] bSalt = CredentialUtil.base64ToByte(salt);
+        byte[] bDigest = HashingUtil.base64ToByte(dbPassword);
+        byte[] bSalt = HashingUtil.base64ToByte(salt);
         byte[] proposedDigest = getHash(ITERATION_NUMBER, proposedPassword, bSalt);
-        if(Arrays.equals(proposedDigest, bDigest))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return Arrays.equals(proposedDigest, bDigest);
     }
 }

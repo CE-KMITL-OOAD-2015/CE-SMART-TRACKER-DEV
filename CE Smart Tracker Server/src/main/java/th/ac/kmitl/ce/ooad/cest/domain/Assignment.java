@@ -9,28 +9,41 @@ public class Assignment
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private float score;
+    private double score;
     @ManyToOne(cascade = CascadeType.ALL)
-    private AssignmentDescription assignmentDescription = new AssignmentDescription();
+    private AssignmentDescription assignmentDescription;
 
-    public int getId()
+    // Need for hibernate
+    public Assignment()
     {
-        return id;
+
     }
 
-    public void setId(int id)
+    public Assignment(AssignmentDescription assignmentDescription)
     {
-        this.id = id;
+        this.assignmentDescription = assignmentDescription;
+        this.score = 0;
     }
 
-    public float getScore()
+    public double getScore()
     {
         return score;
     }
 
-    public void setScore(float score)
+    public void setScore(double score)
     {
-        this.score = score;
+        if(score < 0)
+        {
+            this.score = 0;
+        }
+        else if(score > assignmentDescription.getMaxScore())
+        {
+            this.score = assignmentDescription.getMaxScore();
+        }
+        else
+        {
+            this.score = score;
+        }
     }
 
     public AssignmentDescription getAssignmentDescription()

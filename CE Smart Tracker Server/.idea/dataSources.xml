@@ -1,25 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="1162812751">
-    <data-source source="LOCAL" name="MySQL - ce_smart_tracker_test@128.199.101.200" uuid="dd25c44f-d87d-467d-9ae2-1f10bfeece25">
+  <component name="DataSourceManagerImpl" format="xml" hash="3559435321">
+    <data-source source="LOCAL" name="MySQL - ce_smart_tracker@203.151.92.187" uuid="348b8873-d780-4fba-8962-6f3fad47ae3c">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://128.199.101.200:3306/ce_smart_tracker_test</jdbc-url>
-      <driver-properties>
-        <property name="zeroDateTimeBehavior" value="convertToNull" />
-        <property name="tinyInt1isBit" value="false" />
-        <property name="characterEncoding" value="utf8" />
-        <property name="characterSetResults" value="utf8" />
-        <property name="yearIsDateType" value="false" />
-      </driver-properties>
-      <libraries />
-    </data-source>
-    <data-source source="LOCAL" name="MySQL - ce_smart_tracker2@128.199.101.200" uuid="6b8b436a-7457-4919-92c8-9764e29184b2">
-      <driver-ref>mysql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://128.199.101.200:3306/ce_smart_tracker2</jdbc-url>
+      <jdbc-url>jdbc:mysql://203.151.92.187:3306/ce_smart_tracker</jdbc-url>
       <driver-properties>
         <property name="zeroDateTimeBehavior" value="convertToNull" />
         <property name="tinyInt1isBit" value="false" />

@@ -17,9 +17,40 @@ public class AssignmentBook
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Assignment> assignments = new HashSet<>();
 
+    // Need for hibernate
+    public AssignmentBook()
+    {
+
+    }
+
+    public AssignmentBook(Student owner)
+    {
+        this.owner = owner;
+    }
+
+    public void createAssignment(AssignmentDescription assignmentDescription)
+    {
+        Assignment assignment = new Assignment(assignmentDescription);
+        assignments.add(assignment);
+    }
+
     public void addAssignment(Assignment assignment)
     {
         this.assignments.add(assignment);
+    }
+
+    public boolean updateScoreByTitle(String title, double score)
+    {
+
+        for(Assignment assignment : assignments)
+        {
+            if(assignment.getAssignmentDescription().getTitle().equals(title))
+            {
+                assignment.setScore(score);
+                return true;
+            }
+        }
+        return false;
     }
 
     public Student getOwner()

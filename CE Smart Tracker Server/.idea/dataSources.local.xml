@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="MySQL - ce_smart_tracker_test@128.199.101.200" uuid="dd25c44f-d87d-467d-9ae2-1f10bfeece25">
+    <data-source name="MySQL - ce_smart_tracker@203.151.92.187" uuid="348b8873-d780-4fba-8962-6f3fad47ae3c">
       <secret-storage>master_key</secret-storage>
       <user-name>cest1</user-name>
-      <schema-pattern>ce_smart_tracker_test.*</schema-pattern>
-      <default-schemas>ce_smart_tracker_test.*</default-schemas>
-    </data-source>
-    <data-source name="MySQL - ce_smart_tracker2@128.199.101.200" uuid="6b8b436a-7457-4919-92c8-9764e29184b2">
-      <secret-storage>master_key</secret-storage>
-      <user-name>cest1</user-name>
-      <schema-pattern>ce_smart_tracker2.*</schema-pattern>
-      <default-schemas>ce_smart_tracker2.*</default-schemas>
+      <schema-pattern>ce_smart_tracker.*</schema-pattern>
+      <default-schemas>ce_smart_tracker.*</default-schemas>
     </data-source>
   </component>
 </project>

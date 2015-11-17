@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "account")
+@Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Account
+public class User
 {
     @Id
     @Column(nullable = false)
@@ -20,21 +20,24 @@ public class Account
     private String salt;
     @JsonIgnore
     private String sessionId;
+    @JsonIgnore
+    private String facebookId;
     @Column(nullable = false)
     protected String firstName;
     @Column(nullable = false)
     protected String lastName;
     @Column(nullable = false)
-    protected String faculty;
+    protected Faculty faculty;
     protected String department;
 
-    public Account()
+
+    public User()
     {
         super();
     }
 
     /*
-    public Account(String username, String password, String salt, String studentId, String firstName, String lastName, String faculty, String department)
+    public User(String username, String password, String salt, String studentId, String firstName, String lastName, String faculty, String department)
     {
         this.username = username;
         this.password = password;
@@ -107,12 +110,22 @@ public class Account
         this.lastName = lastName;
     }
 
-    public String getFaculty()
+    public String getFacebookId()
+    {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId)
+    {
+        this.facebookId = facebookId;
+    }
+
+    public Faculty getFaculty()
     {
         return faculty;
     }
 
-    public void setFaculty(String faculty)
+    public void setFaculty(Faculty faculty)
     {
         this.faculty = faculty;
     }

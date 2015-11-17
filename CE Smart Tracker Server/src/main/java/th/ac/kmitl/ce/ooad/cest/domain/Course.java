@@ -1,9 +1,13 @@
 package th.ac.kmitl.ce.ooad.cest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,28 +23,19 @@ public class Course
     @Column(nullable = false)
     private String courseName;
     @Column(nullable = false)
-    private String faculty;
+    private Faculty faculty;
     private String department;
+    @Column(columnDefinition = "TEXT")
     private String description;
-    private String courseDay;
+    private DayOfWeek courseDay;
     private String courseTime;
 
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL})
-    /*
-    @JoinTable(name = "course_student",
-            joinColumns = {@JoinColumn(name = "courseId")},
-            inverseJoinColumns = {@JoinColumn(name = "username")})
-    */
     private Set<Student> enrolledStudents = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL})
-    /*
-    @JoinTable(name = "course_teacher",
-            joinColumns = {@JoinColumn(name = "courseId")},
-            inverseJoinColumns = {@JoinColumn(name = "username")})
-    */
     private Set<Teacher> teachers = new HashSet<>();
 
     @JsonIgnore
@@ -55,24 +50,41 @@ public class Course
     @OneToMany(cascade = {CascadeType.ALL})
     private Set<Rating> ratings = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL})
+    private List<Comment> comments = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL})
+    private List<Announcement> announcements = new ArrayList<>();
+
+    public void addAnnouncement(Teacher teacher, String title, String description)
+    {
+        Announcement announcement = new Announcement();
+        announcement.setTitle(title);
+        announcement.setDescription(description);
+        announcement.setAnnouncer(teacher);
+        announcements.add(announcement);
+    }
+
     public void enroll(Student student)
     {
         enrolledStudents.add(student);
-        AssignmentBook assignmentBook = new AssignmentBook();
-        assignmentBook.setOwner(student);
-        for(AssignmentDescription ad : this.assignmentDescriptions)
+        AssignmentBook assignmentBook = new AssignmentBook(student);
+        for(AssignmentDescription ad : assignmentDescriptions)
         {
-            assignmentBook.addAssignment(createAssignment(ad));
+            assignmentBook.createAssignment(ad);
         }
         this.assignmentBooks.add(assignmentBook);
     }
 
-    public boolean addAssignment(String title, String description, float maxScore)
+    public boolean addAssignment(String title, String description, double maxScore, DateTime dateTime)
     {
         AssignmentDescription assignmentDescription = new AssignmentDescription();
         assignmentDescription.setTitle(title);
         assignmentDescription.setDescription(description);
         assignmentDescription.setMaxScore(maxScore);
+        assignmentDescription.setDueDate(dateTime);
         if(isAssignmentDescriptionExists(assignmentDescription))
         {
             return false;
@@ -82,30 +94,15 @@ public class Course
             assignmentDescriptions.add(assignmentDescription);
             for (AssignmentBook ab : assignmentBooks)
             {
-                ab.addAssignment(createAssignment(assignmentDescription));
+                ab.createAssignment(assignmentDescription);
             }
             return true;
         }
     }
 
-    private Assignment createAssignment(AssignmentDescription assignmentDescription)
-    {
-        Assignment assignment = new Assignment();
-        assignment.setAssignmentDescription(assignmentDescription);
-        assignment.setScore(0);
-        return assignment;
-    }
-
     public boolean isEnrolled(Student student)
     {
-        if(enrolledStudents.contains(student))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return enrolledStudents.contains(student);
     }
 
     public boolean isAssignmentDescriptionExists(AssignmentDescription assignmentDescription)
@@ -162,6 +159,18 @@ public class Course
         return false;
     }
 
+    public boolean isCommented(Student student)
+    {
+        for(Comment comment : comments)
+        {
+            if(comment.getOwner().getUsername().equals(student.getUsername()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public double getAverageRating()
     {
         int sum = 0;
@@ -179,6 +188,67 @@ public class Course
         {
             return 0;
         }
+    }
+
+    public void addComment(Student student, String message)
+    {
+        Comment comment = new Comment();
+        comment.setOwner(student);
+        comment.setMessage(message);
+        comments.add(comment);
+    }
+
+    public void drop(Student student)
+    {
+        for(AssignmentBook assignmentBook : assignmentBooks)
+        {
+            if(assignmentBook.getOwner().equals(student))
+            {
+                assignmentBooks.remove(assignmentBook);
+                break;
+            }
+        }
+        enrolledStudents.remove(student);
+    }
+
+    public boolean updateAssignmentScore(Student student, String title, double score)
+    {
+        AssignmentBook assignmentBook = getAssignmentBookByStudent(student);
+        if(assignmentBook == null)
+        {
+            return false;
+        }
+        else
+        {
+            return assignmentBook.updateScoreByTitle(title, score);
+        }
+    }
+
+    public AssignmentBook getAssignmentBookByStudent(Student student)
+    {
+        if(student == null)
+        {
+            return null;
+        }
+
+        for(AssignmentBook assignmentBook : assignmentBooks)
+        {
+            if(assignmentBook.getOwner().equals(student))
+            {
+                return assignmentBook;
+            }
+        }
+        return null;
+    }
+
+    public List<Announcement> getAnnouncements()
+    {
+        return announcements;
+    }
+
+    public void setAnnouncements(List<Announcement> announcements)
+    {
+        this.announcements = announcements;
     }
 
     public void addTeacher(Teacher teacher)
@@ -216,12 +286,12 @@ public class Course
         this.description = description;
     }
 
-    public String getFaculty()
+    public Faculty getFaculty()
     {
         return faculty;
     }
 
-    public void setFaculty(String faculty)
+    public void setFaculty(Faculty faculty)
     {
         this.faculty = faculty;
     }
@@ -236,12 +306,12 @@ public class Course
         this.department = department;
     }
 
-    public String getCourseDay()
+    public DayOfWeek getCourseDay()
     {
         return courseDay;
     }
 
-    public void setCourseDay(String courseDay)
+    public void setCourseDay(DayOfWeek courseDay)
     {
         this.courseDay = courseDay;
     }
@@ -274,6 +344,26 @@ public class Course
     public void setTeachers(Set<Teacher> teachers)
     {
         this.teachers = teachers;
+    }
+
+    public List<Comment> getComments()
+    {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments)
+    {
+        this.comments = comments;
+    }
+
+    public Set<AssignmentBook> getAssignmentBooks()
+    {
+        return assignmentBooks;
+    }
+
+    public Set<AssignmentDescription> getAssignmentDescriptions()
+    {
+        return assignmentDescriptions;
     }
 
     /*
