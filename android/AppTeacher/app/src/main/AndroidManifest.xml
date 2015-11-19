@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.monoblos.myapplication00" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ce_smart"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider889822464441182"
+            android:exported="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
+        <activity
+            android:name=".SubjectActivity"
+            android:label="@string/title_activity_subject" >
+        </activity>
+        <activity
+            android:name=".CreateSubjectActivity"
+            android:label="@string/title_activity_create_subject" >
+        </activity>
+        <activity
+            android:name=".MyCourseActivity"
+            android:label="@string/title_activity_my_course" >
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".SearchStudentActivity"
+            android:label="@string/title_activity_search_student" >
+        </activity>
+        <activity
+            android:name=".Comment_Rate_Activity"
+            android:label="@string/title_activity_comment__rate_" >
+        </activity>
+        <activity
+            android:name=".AnnouncementActivity"
+            android:label="@string/title_activity_announcement" >
+        </activity>
+        <activity
+            android:name=".MyCourseTeacherActivity"
+            android:label="@string/title_activity_my_course_teacher" >
+        </activity>
+        <activity
+            android:name=".AddAssActivity"
+            android:label="@string/title_activity_add_ass" >
+        </activity>
+        <activity
+            android:name=".AddAnnActivity"
+            android:label="@string/title_activity_add_ann" >
+        </activity>
+        <activity
+            android:name=".MyCourseTeacherAnnActivity"
+            android:label="@string/title_activity_my_course_teacher_ann" >
+        </activity>
+        <activity
+            android:name=".AssignmentActivity"
+            android:label="@string/title_activity_assignment" >
+        </activity>
+        <activity
+            android:name=".AnnStdActivity"
+            android:label="@string/title_activity_ann_std" >
+        </activity>
+        <activity
+            android:name=".ViewScoreSubjectActivity"
+            android:label="@string/title_activity_view_score_subject" >
+        </activity>
+        <activity
+            android:name=".ViewAssTeacherActivity"
+            android:label="@string/title_activity_view_ass_teacher" >
+        </activity>
+        <activity
+            android:name=".ViewEnrolledStdUpdateScoreActivity"
+            android:label="@string/title_activity_view_enrolled_std_update_score" >
+        </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_register" >
+        </activity>
+        <activity
+            android:name=".SearchFromFacActivity"
+            android:label="@string/title_activity_search_from_fac" >
+        </activity>
+        <activity
+            android:name=".ProgressActivity"
+            android:label="@string/title_activity_progress">
+        </activity>
+    </application>
+
+</manifest>

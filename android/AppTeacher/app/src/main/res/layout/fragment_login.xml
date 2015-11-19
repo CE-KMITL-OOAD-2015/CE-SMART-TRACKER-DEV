@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".LoginFragment">
+
+    <TextView
+        android:id="@+id/textName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingTop="10dp"
+        android:text="CE SMART TRACKER"
+        android:textColor="@color/mainColor"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/textId"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textName"
+        android:paddingTop="10dp"
+        android:hint="User Name"/>
+
+    <EditText
+        android:id="@+id/textPass"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textId"
+        android:password="true"
+        android:hint="Password"/>
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/radioGroup"
+        android:text="Login"
+        android:background="@color/mainColor"
+        android:textColor="#FFFFFF"
+        />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/btnLogin"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/textPass"
+        android:layout_centerHorizontal="true">
+        <RadioButton
+            android:id="@+id/radioStd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/radioTeacher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Teacher" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/regisBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_button"
+        android:text="ลงทะเบียน"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@color/mainColor"
+        android:textColor="#FFFFFF"/>
+
+</RelativeLayout>

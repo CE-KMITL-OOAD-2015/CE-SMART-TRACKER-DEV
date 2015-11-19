@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textRegis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="ลงทะเบียน"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="10dp"
+        android:layout_alignLeft="@+id/btnLogin"
+        android:layout_alignStart="@+id/btnLogin"
+        android:textColor="@color/mainColor"/>
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textRegis"
+        android:paddingTop="10dp"
+        android:hint="User Name"/>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/userName"
+        android:hint="Password"/>
+    <EditText
+        android:id="@+id/firstName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/password"
+        android:hint="ชื่อ"/>
+    <EditText
+        android:id="@+id/lastName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/firstName"
+        android:hint="นามสกุล"/>
+    <Spinner
+        android:id="@+id/spinnerRegisFac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lastName"
+        android:layout_alignLeft="@+id/lastName"
+        android:layout_alignStart="@+id/lastName"
+        android:layout_alignRight="@+id/department"
+        android:layout_alignEnd="@+id/department" />
+    <EditText
+        android:id="@+id/department"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/spinnerRegisFac"
+        android:hint="ภาควิชา"/>
+    <EditText
+        android:id="@+id/editTextStdId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/department"
+        android:layout_centerHorizontal="true"
+        android:hint="รหัสนักศึกษา (เฉพาะนักศึกษา)"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/editTextStdId"
+        android:layout_centerHorizontal="true">
+        <RadioButton
+            android:id="@+id/radioStd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/radioTeacher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Teacher" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/radioGroup"
+        android:text="ตกลง"
+        android:background="@color/mainColor"
+        android:textColor="#FFFFFF"
+        />
+
+</RelativeLayout>

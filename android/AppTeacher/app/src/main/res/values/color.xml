@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_color">#ff00ffff</color>
+    <color name="spinner_bg">#ff00ff7f</color>
+    <color name="mainColor">#003366</color>
+</resources>

@@ -1,0 +1,77 @@
+<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/drawer_layout"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    tools:context="com.example.monoblos.myapplication00.SearchFromFacActivity">
+
+    <!-- As the main content view, the view below consumes the entire
+         space available using match_parent in both dimensions. -->
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:paddingTop="5dp"
+            android:paddingLeft="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="สร้างประกาศ"
+            android:id="@+id/textViewSearch"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/mainColor"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/textViewBG"
+            android:layout_below="@id/imageView"
+            android:layout_centerHorizontal="true"
+            android:background="@color/mainColor"
+            android:layout_margin="10dp"/>
+        <Spinner
+            android:id="@+id/spinnerSearchFromFac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewBG"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+        <Button
+            android:id="@+id/btnSearchFromFac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinnerSearchFromFac"
+            android:layout_marginLeft="10dp"
+            android:text="ค้นหา"
+            android:background="@color/mainColor"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"/>
+        <ListView
+            android:id="@+id/listSearchFromFac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnSearchFromFac"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/navigation_drawer"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:name="com.example.monoblos.myapplication00.NavigationDrawerFragment"
+        tools:layout="@layout/fragment_navigation_drawer" />
+
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">CE SMART TRACKER</string>
+
+    <string name="home_section">Home</string>
+    <string name="search_section">ค้นหา</string>
+    <string name="view_mycCurseStudent">ดูวิชาที่ลงทะเบียน</string>
+    <string name="view_mycCurseTeacher">ดูนักศึกษาที่ลงทะเบียน</string>
+    <string name="subject_section">วิชา</string>
+    <string name="create_subject">สร้างรายวิชา</string>
+    <string name="logout">Logout</string>
+    <string name="myCourseTeacher">วิชาที่สอน</string>
+    <string name="addAnn">add Announcement </string>
+    <string name="annStd">ประกาศ</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_search">SearchActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_subject">SubjectActivity</string>
+    <string name="title_activity_create_subject">CreateSubjectActivity</string>
+    <string name="title_activity_my_course">MyCourseActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">CE SMART TRACKER</string>
+    <string name="facebook_app_id">889822464441182</string>
+    <string name="title_activity_my_course_teacher">MyCourseTeacherActivity</string>
+    <string name="title_activity_search_student">SearchStudentActivity</string>
+
+    <string name="dayCreateSub">วันที่สอน</string>
+    <string name="title_activity_comment__rate_">Comment_Rate_Activity</string>
+    <string name="title_activity_announcement">AnnouncementActivity</string>
+    <string name="title_activity_add_ass">AddAssActivity</string>
+    <string name="title_activity_add_ann">AddAnnActivity</string>
+    <string name="title_activity_my_course_teacher_ann">MyCourseTeacherAnnActivity</string>
+    <string name="title_activity_assignment">AssignmentActivity</string>
+    <string name="title_activity_ann_std">AnnStdActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_view_score_subject">ViewScoreSubjectActivity</string>
+    <string name="title_activity_view_ass_teacher">ViewAssTeacherActivity</string>
+    <string name="title_activity_view_enrolled_std_update_score">
+        ViewEnrolledStdUpdateScoreActivity
+    </string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_searcyh_from_fac">SearcyhFromFacActivity</string>
+    <string name="title_activity_search_from_fac">SearchFromFacActivity</string>
+    <string name="title_activity_progress">ProgressActivity</string>
+</resources>
