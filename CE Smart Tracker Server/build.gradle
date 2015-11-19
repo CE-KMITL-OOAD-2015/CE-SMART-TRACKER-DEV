@@ -33,6 +33,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile('commons-dbcp:commons-dbcp')
     compile('joda-time:joda-time')
     compile('org.jadira.usertype:usertype.core:3.2.0.GA')

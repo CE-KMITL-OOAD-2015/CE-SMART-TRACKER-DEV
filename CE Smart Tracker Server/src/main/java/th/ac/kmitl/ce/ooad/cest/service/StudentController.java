@@ -14,7 +14,6 @@ import th.ac.kmitl.ce.ooad.cest.repository.TeacherRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.UserRepository;
 import th.ac.kmitl.ce.ooad.cest.service.response.Response;
 import th.ac.kmitl.ce.ooad.cest.service.response.ResponseEnum;
-import th.ac.kmitl.ce.ooad.cest.util.HashingUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -78,7 +77,7 @@ public class StudentController
             {
                 return new Response(ResponseEnum.DUPLICATED_USERNAME);
             }
-            else if(userRepository.findFirstByFacebookId(facebookId) != null)
+            else if(!facebookId.equals("") && userRepository.findFirstByFacebookId(facebookId) != null)
             {
                 return new Response(ResponseEnum.DUPLICATED_FACEBOOK_ID);
             }

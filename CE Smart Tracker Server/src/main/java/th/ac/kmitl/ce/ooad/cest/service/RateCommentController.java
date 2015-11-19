@@ -91,7 +91,7 @@ public class RateCommentController
         {
             return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
-        else if(!course.isEnrolled(student))
+        else if(!course.isEnrolledBy(student))
         {
             return new Response(ResponseEnum.NOT_ENROLLED);
         }
@@ -130,7 +130,7 @@ public class RateCommentController
         {
             return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
-        else if(!course.isEnrolled(student))
+        else if(!course.isEnrolledBy(student))
         {
             return new Response(ResponseEnum.NOT_ENROLLED);
         }

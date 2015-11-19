@@ -1,58 +1,120 @@
 package th.ac.kmitl.ce.ooad.cest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "assignment")
 public class Assignment
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private double score;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private AssignmentDescription assignmentDescription;
+    private long id;
 
-    // Need for hibernate
-    public Assignment()
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL})
+    private Set<ScoreBook> scoreBooks = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL})
+    private Set<AssignmentDescription> assignmentDescriptions = new HashSet<>();
+
+    public ScoreBook getAssignmentBookByStudent(Student student)
     {
-
-    }
-
-    public Assignment(AssignmentDescription assignmentDescription)
-    {
-        this.assignmentDescription = assignmentDescription;
-        this.score = 0;
-    }
-
-    public double getScore()
-    {
-        return score;
-    }
-
-    public void setScore(double score)
-    {
-        if(score < 0)
+        if(student == null)
         {
-            this.score = 0;
+            return null;
         }
-        else if(score > assignmentDescription.getMaxScore())
+
+        for(ScoreBook scoreBook : scoreBooks)
         {
-            this.score = assignmentDescription.getMaxScore();
+            if(scoreBook.getOwner().equals(student))
+            {
+                return scoreBook;
+            }
+        }
+        return null;
+    }
+
+    public void createScoreBook(Student student)
+    {
+        ScoreBook scoreBook = new ScoreBook(student);
+        for(AssignmentDescription ad : assignmentDescriptions)
+        {
+            scoreBook.createAssignmentScore(ad);
+        }
+        this.scoreBooks.add(scoreBook);
+    }
+
+    public boolean addAssignment(String title, String description, double maxScore, DateTime dateTime)
+    {
+        AssignmentDescription assignmentDescription = new AssignmentDescription();
+        assignmentDescription.setTitle(title);
+        assignmentDescription.setDescription(description);
+        assignmentDescription.setMaxScore(maxScore);
+        assignmentDescription.setDueDate(dateTime);
+        if(isAssignmentDescriptionExists(assignmentDescription))
+        {
+            return false;
         }
         else
         {
-            this.score = score;
+            assignmentDescriptions.add(assignmentDescription);
+            for (ScoreBook ab : scoreBooks)
+            {
+                ab.createAssignmentScore(assignmentDescription);
+            }
+            return true;
         }
     }
 
-    public AssignmentDescription getAssignmentDescription()
+    private boolean isAssignmentDescriptionExists(AssignmentDescription assignmentDescription)
     {
-        return assignmentDescription;
+        for(AssignmentDescription ad : assignmentDescriptions)
+        {
+            if(ad.equals(assignmentDescription))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void setAssignmentDescription(AssignmentDescription assignmentDescription)
+    public void drop(Student student)
     {
-        this.assignmentDescription = assignmentDescription;
+        for(ScoreBook scoreBook : scoreBooks)
+        {
+            if(scoreBook.getOwner().equals(student))
+            {
+                scoreBooks.remove(scoreBook);
+                break;
+            }
+        }
+    }
+
+    public boolean updateAssignmentScore(Student student, String title, double score)
+    {
+        ScoreBook scoreBook = getAssignmentBookByStudent(student);
+        if(scoreBook == null)
+        {
+            return false;
+        }
+        else
+        {
+            return scoreBook.updateScoreByTitle(title, score);
+        }
+    }
+
+    public Set<AssignmentDescription> getAssignmentDescriptions()
+    {
+        return assignmentDescriptions;
+    }
+
+    public Set<ScoreBook> getScoreBooks()
+    {
+        return scoreBooks;
     }
 }

@@ -56,7 +56,7 @@ public class AssignmentController
         {
             return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
-        else if (!course.isTeaching(teacher))
+        else if (!course.isTeachingBy(teacher))
         {
             return new Response(ResponseEnum.NOT_TEACHING);
         }
@@ -114,7 +114,7 @@ public class AssignmentController
             return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
 
-        if (!course.isTeaching(teacher))
+        if (!course.isTeachingBy(teacher))
         {
             return new Response(ResponseEnum.NOT_TEACHING);
         }
@@ -156,7 +156,7 @@ public class AssignmentController
         Student student = studentRepository.findFirstBySessionId(sessionId);
         if(student != null)
         {
-            if(course.isEnrolled(student))
+            if(course.isEnrolledBy(student))
             {
                 return new ViewAssignmentBookResponse(ResponseEnum.SUCCESS, course.getAssignmentBookByStudent(student));
             }
@@ -190,9 +190,9 @@ public class AssignmentController
         Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
         if(teacher != null)
         {
-            if(course.isTeaching(teacher))
+            if(course.isTeachingBy(teacher))
             {
-                return new ViewAllAssignmentBookResponse(ResponseEnum.SUCCESS, course.getAssignmentBooks());
+                return new ViewAllAssignmentBookResponse(ResponseEnum.SUCCESS, course.getScoreBooks());
             }
             else
             {
@@ -208,8 +208,8 @@ public class AssignmentController
     @RequestMapping("/viewAssignmentBookOfStudent")
     @ResponseBody
     public ViewAssignmentBookResponse requestViewAssignmentBookOfStudent(@RequestParam(value = "sessionId", required = true) String sessionId,
-                                                                @RequestParam(value = "courseId", required = true) String courseId,
-                                                                @RequestParam(value = "username", required = true) String username)
+                                                                        @RequestParam(value = "courseId", required = true) String courseId,
+                                                                        @RequestParam(value = "username", required = true) String username)
     {
         return viewAssignmentBookOfStudent(sessionId.trim(), courseId.trim(), username.trim());
     }
@@ -227,7 +227,7 @@ public class AssignmentController
         {
             return new ViewAssignmentBookResponse(ResponseEnum.INVALID_SESSION);
         }
-        else if(!course.isTeaching(teacher))
+        else if(!course.isTeachingBy(teacher))
         {
             return new ViewAssignmentBookResponse(ResponseEnum.NOT_TEACHING);
         }
@@ -237,7 +237,7 @@ public class AssignmentController
         {
             return new ViewAssignmentBookResponse(ResponseEnum.USERNAME_NOT_FOUND);
         }
-        else if(!course.isEnrolled(student))
+        else if(!course.isEnrolledBy(student))
         {
             return new ViewAssignmentBookResponse(ResponseEnum.NOT_ENROLLED);
         }
@@ -248,12 +248,12 @@ public class AssignmentController
 
     private class ViewAllAssignmentBookResponse extends Response
     {
-        private Set<AssignmentBook> assignmentBooks;
+        private Set<ScoreBook> assignmentBooks;
 
-        public ViewAllAssignmentBookResponse(ResponseEnum responseEnum, Set<AssignmentBook> assignmentBooks)
+        public ViewAllAssignmentBookResponse(ResponseEnum responseEnum, Set<ScoreBook> scoreBooks)
         {
             super(responseEnum);
-            this.assignmentBooks = assignmentBooks;
+            this.assignmentBooks = scoreBooks;
         }
 
         public ViewAllAssignmentBookResponse(ResponseEnum responseEnum)
@@ -261,7 +261,7 @@ public class AssignmentController
             super(responseEnum);
         }
 
-        public Set<AssignmentBook> getAssignmentBooks()
+        public Set<ScoreBook> getAssignmentBooks()
         {
             return assignmentBooks;
         }
@@ -269,12 +269,12 @@ public class AssignmentController
 
     private class ViewAssignmentBookResponse extends Response
     {
-        private AssignmentBook assignmentBook;
+        private ScoreBook assignmentBook;
 
-        public ViewAssignmentBookResponse(ResponseEnum responseEnum, AssignmentBook assignmentBook)
+        public ViewAssignmentBookResponse(ResponseEnum responseEnum, ScoreBook scoreBook)
         {
             super(responseEnum);
-            this.assignmentBook = assignmentBook;
+            this.assignmentBook = scoreBook;
         }
 
         public ViewAssignmentBookResponse(ResponseEnum responseEnum)
@@ -283,7 +283,7 @@ public class AssignmentController
             this.assignmentBook = null;
         }
 
-        public AssignmentBook getAssignmentBook()
+        public ScoreBook getAssignmentBook()
         {
             return assignmentBook;
         }

@@ -2,6 +2,7 @@ package th.ac.kmitl.ce.ooad.cest.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,9 +14,7 @@ import th.ac.kmitl.ce.ooad.cest.service.response.*;
 
 
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class CourseController
@@ -27,6 +26,8 @@ public class CourseController
     private TeacherRepository teacherRepository;
     @Autowired
     private CourseRepository courseRepository;
+    /*@Autowired
+    private Validator validator;*/
 
     @RequestMapping("/createCourse")
     @ResponseBody
@@ -96,7 +97,7 @@ public class CourseController
         {
             return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
-        else if(course.isEnrolled(student))
+        else if(course.isEnrolledBy(student))
         {
             return new Response(ResponseEnum.ALREADY_ENROLLED);
         }
@@ -129,7 +130,7 @@ public class CourseController
         {
             return new Response(ResponseEnum.COURSE_NOT_FOUND);
         }
-        else if(!course.isEnrolled(student))
+        else if(!course.isEnrolledBy(student))
         {
             return new Response(ResponseEnum.NOT_ENROLLED);
         }
@@ -251,12 +252,113 @@ public class CourseController
         return courseRepository.findFirstByCourseId(courseId);
     }
 
+    @RequestMapping("/viewReport")
+    @ResponseBody
+    public ViewReportResponse requestViewReport(@RequestParam(value="sessionId", required=true) String sessionId,
+                                                @RequestParam(value="courseId", required=true) String courseId)
+    {
+        return viewReport(sessionId.trim(), courseId.trim());
+    }
+
+    private ViewReportResponse viewReport(String sessionId, String courseId)
+    {
+        Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
+        Course course = courseRepository.findFirstByCourseId(courseId);
+        if(teacher == null)
+        {
+            return new ViewReportResponse(ResponseEnum.INVALID_SESSION);
+        }
+        else if(course == null)
+        {
+            return new ViewReportResponse(ResponseEnum.COURSE_NOT_FOUND);
+        }
+        if(!course.isTeachingBy(teacher))
+        {
+            return new ViewReportResponse(ResponseEnum.NOT_TEACHING);
+        }
+
+        return new ViewReportResponse(ResponseEnum.SUCCESS, course);
+    }
 
     @RequestMapping("/test")
     @ResponseBody
     public List<Course> requestTest(@RequestParam(value = "text", required = false)String text)
     {
         return courseRepository.findByFacultyAndDepartmentOrNone(Faculty.ENGINEERING, "computer");
+    }
+
+    @RequestMapping("/courseSchedule")
+    public String requestCourseSchedule(@RequestParam(value="username", required=false) String username, Model model)
+    {
+        if(username == null)
+        {
+            return "notFound";
+        }
+        Student student = studentRepository.findFirstByUsername(username);
+        if(student == null)
+        {
+            return "notFound";
+        }
+        else
+        {
+            List<Course> courses = new ArrayList<>(student.getEnrolledCourses());
+            Collections.sort(courses, new Comparator<Course>()
+            {
+                @Override
+                public int compare(Course o1, Course o2)
+                {
+                    return o1.getCourseDay().compareTo(o2.getCourseDay());
+                }
+            });
+            model.addAttribute("username", username);
+            model.addAttribute("courses", courses);
+            return "schedule";
+        }
+
+    }
+
+
+    private class ViewReportResponse extends Response
+    {
+        private Course course;
+        private Set<Teacher> teachers;
+        private List<ScoreBook> assignmentBooks;
+        private Statistic statistic;
+
+        public ViewReportResponse(ResponseEnum responseEnum)
+        {
+            super(responseEnum);
+        }
+
+        public ViewReportResponse(ResponseEnum responseEnum, Course course)
+        {
+            super(responseEnum);
+            this.course = course;
+            this.teachers = course.getTeachers();
+            this.assignmentBooks = new ArrayList<>(course.getScoreBooks());
+            Collections.sort(this.assignmentBooks);
+            this.statistic = course.getStatistic();
+        }
+
+        public Course getCourse()
+        {
+            return course;
+        }
+
+        public Set<Teacher> getTeachers()
+        {
+            return teachers;
+        }
+
+        public List<ScoreBook> getAssignmentBooks()
+        {
+            return assignmentBooks;
+        }
+
+        public Statistic getStatistic()
+        {
+            return statistic;
+        }
     }
 
 }

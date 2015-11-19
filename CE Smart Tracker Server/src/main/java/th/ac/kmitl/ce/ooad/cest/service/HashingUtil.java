@@ -4,7 +4,7 @@
  *
  */
 
-package th.ac.kmitl.ce.ooad.cest.util;
+package th.ac.kmitl.ce.ooad.cest.service;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashingUtil
 {
-    public static final int ITERATION_NUMBER = 1000;
+    private static final int ITERATION_NUMBER = 1000;
     /**
      * From a password, a number of iterations and a salt,
      * returns the corresponding digest
@@ -27,7 +27,7 @@ public class HashingUtil
      * @return byte[] The digested password
      * @throws NoSuchAlgorithmException If the algorithm doesn't exist
      */
-    public static byte[] getHash(int iterationNb, String password, byte[] salt) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static byte[] getHash(int iterationNb, String password, byte[] salt) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         digest.reset();
@@ -47,7 +47,7 @@ public class HashingUtil
      * @return byte[]
      * @throws IOException
      */
-    public static byte[] base64ToByte(String data)
+    private static byte[] base64ToByte(String data)
     {
         //Base64.Decoder decoder = new Base64.Decoder().
         return Base64.getDecoder().decode(data);

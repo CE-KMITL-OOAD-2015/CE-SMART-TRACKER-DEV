@@ -13,7 +13,6 @@ import th.ac.kmitl.ce.ooad.cest.repository.TeacherRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.UserRepository;
 import th.ac.kmitl.ce.ooad.cest.service.response.Response;
 import th.ac.kmitl.ce.ooad.cest.service.response.ResponseEnum;
-import th.ac.kmitl.ce.ooad.cest.util.HashingUtil;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +28,8 @@ public class LoginController
     private TeacherRepository teacherRepository;
     @Autowired
     private UserRepository userRepository;
+    /*@Autowired
+    private Validator validator;*/
 
     @RequestMapping("/login")
     @ResponseBody
@@ -85,12 +86,10 @@ public class LoginController
             }
             catch (IOException e)
             {
-                e.printStackTrace();
                 return new LoginResponse(ResponseEnum.ERROR);
             }
             catch (NoSuchAlgorithmException e)
             {
-                e.printStackTrace();
                 return new LoginResponse(ResponseEnum.ERROR);
             }
         }

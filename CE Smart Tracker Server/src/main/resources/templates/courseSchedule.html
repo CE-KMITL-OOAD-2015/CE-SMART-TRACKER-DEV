@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="'Hello, ' + ${username} + '!'" />
+<table>
+    <tbody>
+
+    <tr>
+        <th>รหัสวิชา</th>
+        <th>ชื่อวิชา</th>
+        <th>วันที่เรียน</th>
+    </tr>
+    <tr th:each="course : ${courses}">
+        <td th:text="${course.courseId}">012345</td>
+        <td th:text="${course.courseName}">MATH</td>
+        <td th:text="${course.courseDay}">Friday</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

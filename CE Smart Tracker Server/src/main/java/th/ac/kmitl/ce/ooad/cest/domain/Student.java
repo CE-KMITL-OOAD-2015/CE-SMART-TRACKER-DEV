@@ -7,14 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="student")
 public class Student extends User
 {
 
     @Column(nullable=false)
     private int studentId;
     @JsonIgnore
-    @ManyToMany(mappedBy="enrolledStudents")
+    @ManyToMany
     private Set<Course> enrolledCourses = new HashSet<Course>();
 
     public Student()

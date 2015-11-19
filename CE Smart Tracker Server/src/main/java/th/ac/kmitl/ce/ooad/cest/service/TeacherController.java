@@ -14,14 +14,14 @@ import th.ac.kmitl.ce.ooad.cest.repository.TeacherRepository;
 import th.ac.kmitl.ce.ooad.cest.repository.UserRepository;
 import th.ac.kmitl.ce.ooad.cest.service.response.Response;
 import th.ac.kmitl.ce.ooad.cest.service.response.ResponseEnum;
-import th.ac.kmitl.ce.ooad.cest.util.HashingUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
 @Controller
-public class TeacherController {
+public class TeacherController
+{
 
     @Autowired
     private UserRepository userRepository;
@@ -31,33 +31,37 @@ public class TeacherController {
     private TeacherRepository teacherRepository;
     @Autowired
     private CourseRepository courseRepository;
+    /*@Autowired
+    private Validator validator;*/
 
     @RequestMapping("/createTeacher")
     @ResponseBody
-    public Response requestCreateStudent(@RequestParam(value="username", required=true) String username,
-                                         @RequestParam(value="password", required=true) String password,
-                                         @RequestParam(value="firstName", required=true) String firstName,
-                                         @RequestParam(value="lastName", required=true) String lastName,
-                                         @RequestParam(value="faculty", required=true) Faculty faculty,
-                                         @RequestParam(value="department", required=false, defaultValue = "") String department,
-                                         @RequestParam(value = "facebookId", required=false, defaultValue = "") String facebookId)
+    public Response requestCreateTeacher(@RequestParam(value = "username", required = true) String username,
+                                         @RequestParam(value = "password", required = true) String password,
+                                         @RequestParam(value = "firstName", required = true) String firstName,
+                                         @RequestParam(value = "lastName", required = true) String lastName,
+                                         @RequestParam(value = "faculty", required = true) Faculty faculty,
+                                         @RequestParam(value = "department", required = false, defaultValue = "") String department,
+                                         @RequestParam(value = "facebookId", required = false, defaultValue = "") String facebookId)
     {
         return createTeacher(username.trim(), password, firstName.trim(), lastName.trim(), faculty, department.trim(), facebookId.trim());
 
     }
 
-    private Response createTeacher(String username, String password, String firstName, String lastName, Faculty faculty, String department, String facebookId) {
-        try
+    private Response createTeacher(String username, String password, String firstName, String lastName, Faculty faculty, String department, String facebookId)
+    {
+
+        if(userRepository.findFirstByUsername(username) != null)
         {
-            if (userRepository.findFirstByUsername(username) != null)
-            {
-                return new Response(ResponseEnum.DUPLICATED_USERNAME);
-            }
-            else if(userRepository.findFirstByFacebookId(facebookId) != null)
-            {
-                return new Response(ResponseEnum.DUPLICATED_FACEBOOK_ID);
-            }
-            else
+            return new Response(ResponseEnum.DUPLICATED_USERNAME);
+        }
+        else if(!facebookId.equals("") && userRepository.findFirstByFacebookId(facebookId) != null)
+        {
+            return new Response(ResponseEnum.DUPLICATED_FACEBOOK_ID);
+        }
+        else
+        {
+            try
             {
                 String[] results = HashingUtil.hashPassword(password);
                 Teacher teacher = new Teacher();
@@ -72,20 +76,21 @@ public class TeacherController {
                 teacherRepository.save(teacher);
                 return new Response(ResponseEnum.SUCCESS);
             }
+            catch(NoSuchAlgorithmException e)
+            {
+                return new Response(ResponseEnum.ERROR);
+            }
+            catch(UnsupportedEncodingException e)
+            {
+                return new Response(ResponseEnum.ERROR);
+            }
         }
-        catch (NoSuchAlgorithmException e)
-        {
-            return new Response(ResponseEnum.ERROR);
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            return new Response(ResponseEnum.ERROR);
-        }
+
     }
 
     @RequestMapping("/viewTeachingCourses")
     @ResponseBody
-    public ViewTeachingCoursesResponse requestViewEnrolledCourses(@RequestParam(value = "sessionId", required = true) String sessionId)
+    public ViewTeachingCoursesResponse requestViewTeachingCourses(@RequestParam(value = "sessionId", required = true) String sessionId)
     {
         return viewTeachingCourses(sessionId.trim());
     }
@@ -93,7 +98,7 @@ public class TeacherController {
     private ViewTeachingCoursesResponse viewTeachingCourses(String sessionId)
     {
         Teacher teacher = teacherRepository.findFirstBySessionId(sessionId);
-        if (teacher != null)
+        if(teacher != null)
         {
             ViewTeachingCoursesResponse viewTeachingCoursesResponse = new ViewTeachingCoursesResponse(ResponseEnum.SUCCESS);
             viewTeachingCoursesResponse.setTeachingCourses(teacher.getTeachingCourses());
@@ -109,11 +114,13 @@ public class TeacherController {
     {
         private Set<Course> teachingCourses;
 
-        public Set<Course> getTeachingCourses() {
+        public Set<Course> getTeachingCourses()
+        {
             return teachingCourses;
         }
 
-        public void setTeachingCourses(Set<Course> teachingCourses) {
+        public void setTeachingCourses(Set<Course> teachingCourses)
+        {
             this.teachingCourses = teachingCourses;
         }
 

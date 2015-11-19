@@ -19,30 +19,19 @@
       <index name="FK_gblxfql0fy880kobt3jirk53w" unique="false" columns="announcer_username"/>
     </table>
     <table name="assignment" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="score" sqlType="DOUBLE" precision="22" scale="0" nullable="false" jdbcType="8"/>
-      <column name="assignment_description_id" sqlType="BIGINT" precision="19" scale="0" nullable="true" jdbcType="-5"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_aphtufvw18nhnuv85f8re48g7" columns="assignment_description_id" ref-table="assignment_description" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_k7febdoyv4590oat0s2w81u8d" table="assignment_book_assignments" schema="" catalog="ce_smart_tracker" columns="assignments_id"/>
-      <index name="FK_aphtufvw18nhnuv85f8re48g7" unique="false" columns="assignment_description_id"/>
-    </table>
-    <table name="assignment_book" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
-      <column name="owner_username" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_rwmw3nm0duh4vuns2q4x756mg" columns="owner_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_bxjxdf7oagtcpo1m5f4cw1cxu" table="assignment_book_assignments" schema="" catalog="ce_smart_tracker" columns="assignment_book_id"/>
-      <exported-key name="FK_rugkpnfo8y3tg04cs6hn0n7ut" table="course_assignment_books" schema="" catalog="ce_smart_tracker" columns="assignment_books_id"/>
-      <index name="FK_rwmw3nm0duh4vuns2q4x756mg" unique="false" columns="owner_username"/>
+      <exported-key name="FK_o103osyanrcfnxnb2yv8pk0al" table="assignment_assignment_descriptions" schema="" catalog="ce_smart_tracker" columns="assignment_id"/>
+      <exported-key name="FK_8m8kr1rm9x71maa66338fa62s" table="assignment_score_books" schema="" catalog="ce_smart_tracker" columns="assignment_id"/>
+      <exported-key name="FK_5lsiev3eo3jpr924t70phthxp" table="course" schema="" catalog="ce_smart_tracker" columns="assignment_id"/>
     </table>
-    <table name="assignment_book_assignments" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="assignment_book_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
-      <column name="assignments_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="assignment_book_id,assignments_id"/>
-      <foreign-key name="FK_bxjxdf7oagtcpo1m5f4cw1cxu" columns="assignment_book_id" ref-table="assignment_book" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_k7febdoyv4590oat0s2w81u8d" columns="assignments_id" ref-table="assignment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="UK_k7febdoyv4590oat0s2w81u8d" unique="true" columns="assignments_id"/>
+    <table name="assignment_assignment_descriptions" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="assignment_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="assignment_descriptions_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <primary-key name="PRIMARY" columns="assignment_id,assignment_descriptions_id"/>
+      <foreign-key name="FK_o103osyanrcfnxnb2yv8pk0al" columns="assignment_id" ref-table="assignment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_17h3ujh17q02yiwmb4xlimn4w" columns="assignment_descriptions_id" ref-table="assignment_description" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="UK_17h3ujh17q02yiwmb4xlimn4w" unique="true" columns="assignment_descriptions_id"/>
     </table>
     <table name="assignment_description" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
@@ -51,8 +40,25 @@
       <column name="max_score" sqlType="DOUBLE" precision="22" scale="0" nullable="false" jdbcType="8"/>
       <column name="title" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
-      <exported-key name="FK_aphtufvw18nhnuv85f8re48g7" table="assignment" schema="" catalog="ce_smart_tracker" columns="assignment_description_id"/>
-      <exported-key name="FK_8a5h7r870sftincnqloon1fhr" table="course_assignment_descriptions" schema="" catalog="ce_smart_tracker" columns="assignment_descriptions_id"/>
+      <exported-key name="FK_17h3ujh17q02yiwmb4xlimn4w" table="assignment_assignment_descriptions" schema="" catalog="ce_smart_tracker" columns="assignment_descriptions_id"/>
+      <exported-key name="FK_c38tbokj4t715o7wa8m6r9slw" table="assignment_score" schema="" catalog="ce_smart_tracker" columns="assignment_description_id"/>
+    </table>
+    <table name="assignment_score" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="score" sqlType="DOUBLE" precision="22" scale="0" nullable="false" jdbcType="8"/>
+      <column name="assignment_description_id" sqlType="BIGINT" precision="19" scale="0" nullable="true" jdbcType="-5"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_c38tbokj4t715o7wa8m6r9slw" columns="assignment_description_id" ref-table="assignment_description" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="FK_6t2le942j3g44mhgqpfg540dv" table="score_book_assignments" schema="" catalog="ce_smart_tracker" columns="assignments_id"/>
+      <index name="FK_c38tbokj4t715o7wa8m6r9slw" unique="false" columns="assignment_description_id"/>
+    </table>
+    <table name="assignment_score_books" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="assignment_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="score_books_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <primary-key name="PRIMARY" columns="assignment_id,score_books_id"/>
+      <foreign-key name="FK_8m8kr1rm9x71maa66338fa62s" columns="assignment_id" ref-table="assignment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_hkdxfu15xqmqbsr2ue6998302" columns="score_books_id" ref-table="score_book" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="UK_hkdxfu15xqmqbsr2ue6998302" unique="true" columns="score_books_id"/>
     </table>
     <table name="comment" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
@@ -60,7 +66,7 @@
       <column name="owner_username" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_8v6w9twduqfuhsc298ky52cyh" columns="owner_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_o8mprfern909g8svubygwqbea" table="course_comments" schema="" catalog="ce_smart_tracker" columns="comments_id"/>
+      <exported-key name="FK_6gnd2v2kjgg3vu28j58jjob39" table="review_comments" schema="" catalog="ce_smart_tracker" columns="comments_id"/>
       <index name="FK_8v6w9twduqfuhsc298ky52cyh" unique="false" columns="owner_username"/>
     </table>
     <table name="course" schema="" catalog="ce_smart_tracker" type="TABLE">
@@ -71,14 +77,19 @@
       <column name="department" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
       <column name="faculty" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="assignment_id" sqlType="BIGINT" precision="19" scale="0" nullable="true" jdbcType="-5"/>
+      <column name="enrollment_id" sqlType="BIGINT" precision="19" scale="0" nullable="true" jdbcType="-5"/>
+      <column name="review_id" sqlType="BIGINT" precision="19" scale="0" nullable="true" jdbcType="-5"/>
       <primary-key name="PRIMARY" columns="course_id"/>
+      <foreign-key name="FK_qx5yuu3g3xkackyqups8eh7jy" columns="review_id" ref-table="review" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_5lsiev3eo3jpr924t70phthxp" columns="assignment_id" ref-table="assignment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_job1k0apmiminsrbg31nqwdo8" columns="enrollment_id" ref-table="enrollment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_7wkb9nwgh16g4b7kcm2cnvyh8" table="course_announcements" schema="" catalog="ce_smart_tracker" columns="course_courseId"/>
-      <exported-key name="FK_gedyfxkm9ea1rhcc59ln043km" table="course_assignment_books" schema="" catalog="ce_smart_tracker" columns="course_courseId"/>
-      <exported-key name="FK_qdo5knlx26r51tji52r4a36fl" table="course_assignment_descriptions" schema="" catalog="ce_smart_tracker" columns="course_courseId"/>
-      <exported-key name="FK_gwjbe06qnd4d1lw3mc8ibhc06" table="course_comments" schema="" catalog="ce_smart_tracker" columns="course_courseId"/>
-      <exported-key name="FK_e1whycq98awo469v9umgoukkc" table="course_enrolled_students" schema="" catalog="ce_smart_tracker" columns="enrolled_courses_courseId"/>
-      <exported-key name="FK_7pr5l96f2x5j9299gjkmmldku" table="course_ratings" schema="" catalog="ce_smart_tracker" columns="course_courseId"/>
       <exported-key name="FK_8gobrw2dvpyv9f6jlu31s3hmo" table="course_teachers" schema="" catalog="ce_smart_tracker" columns="teaching_courses_courseId"/>
+      <exported-key name="FK_av44lcct66ye4ym30ap9r9a7k" table="student_enrolled_courses" schema="" catalog="ce_smart_tracker" columns="enrolled_courses_courseId"/>
+      <index name="FK_5lsiev3eo3jpr924t70phthxp" unique="false" columns="assignment_id"/>
+      <index name="FK_job1k0apmiminsrbg31nqwdo8" unique="false" columns="enrollment_id"/>
+      <index name="FK_qx5yuu3g3xkackyqups8eh7jy" unique="false" columns="review_id"/>
     </table>
     <table name="course_announcements" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="course_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
@@ -88,46 +99,6 @@
       <index name="UK_8h4e3dknb0tutd5htrq8uv1a4" unique="true" columns="announcements_id"/>
       <index name="FK_7wkb9nwgh16g4b7kcm2cnvyh8" unique="false" columns="course_courseId"/>
     </table>
-    <table name="course_assignment_books" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="course_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="assignment_books_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
-      <primary-key name="PRIMARY" columns="course_courseId,assignment_books_id"/>
-      <foreign-key name="FK_gedyfxkm9ea1rhcc59ln043km" columns="course_courseId" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_rugkpnfo8y3tg04cs6hn0n7ut" columns="assignment_books_id" ref-table="assignment_book" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="UK_rugkpnfo8y3tg04cs6hn0n7ut" unique="true" columns="assignment_books_id"/>
-    </table>
-    <table name="course_assignment_descriptions" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="course_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="assignment_descriptions_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
-      <primary-key name="PRIMARY" columns="course_courseId,assignment_descriptions_id"/>
-      <foreign-key name="FK_qdo5knlx26r51tji52r4a36fl" columns="course_courseId" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_8a5h7r870sftincnqloon1fhr" columns="assignment_descriptions_id" ref-table="assignment_description" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="UK_8a5h7r870sftincnqloon1fhr" unique="true" columns="assignment_descriptions_id"/>
-    </table>
-    <table name="course_comments" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="course_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="comments_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
-      <foreign-key name="FK_gwjbe06qnd4d1lw3mc8ibhc06" columns="course_courseId" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_o8mprfern909g8svubygwqbea" columns="comments_id" ref-table="comment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="UK_o8mprfern909g8svubygwqbea" unique="true" columns="comments_id"/>
-      <index name="FK_gwjbe06qnd4d1lw3mc8ibhc06" unique="false" columns="course_courseId"/>
-    </table>
-    <table name="course_enrolled_students" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="enrolled_courses_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="enrolled_students_username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="enrolled_courses_courseId,enrolled_students_username"/>
-      <foreign-key name="FK_e1whycq98awo469v9umgoukkc" columns="enrolled_courses_courseId" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_re6veqmo60eo3b3wao4fstoxd" columns="enrolled_students_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_re6veqmo60eo3b3wao4fstoxd" unique="false" columns="enrolled_students_username"/>
-    </table>
-    <table name="course_ratings" schema="" catalog="ce_smart_tracker" type="TABLE">
-      <column name="course_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="ratings_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
-      <primary-key name="PRIMARY" columns="course_courseId,ratings_id"/>
-      <foreign-key name="FK_7pr5l96f2x5j9299gjkmmldku" columns="course_courseId" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_22w5syr2qa2pqtfglf2dgc69u" columns="ratings_id" ref-table="rating" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="UK_22w5syr2qa2pqtfglf2dgc69u" unique="true" columns="ratings_id"/>
-    </table>
     <table name="course_teachers" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="teaching_courses_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="teachers_username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
@@ -136,24 +107,87 @@
       <foreign-key name="FK_yaik9sq9dx9fpm8h8u897q79" columns="teachers_username" ref-table="teacher" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="FK_yaik9sq9dx9fpm8h8u897q79" unique="false" columns="teachers_username"/>
     </table>
+    <table name="enrollment" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="FK_job1k0apmiminsrbg31nqwdo8" table="course" schema="" catalog="ce_smart_tracker" columns="enrollment_id"/>
+      <exported-key name="FK_r7u81jf804hhvpf4phbwv5nw" table="enrollment_enrolled_students" schema="" catalog="ce_smart_tracker" columns="enrollment_id"/>
+    </table>
+    <table name="enrollment_enrolled_students" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="enrollment_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="enrolled_students_username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="enrollment_id,enrolled_students_username"/>
+      <foreign-key name="FK_r7u81jf804hhvpf4phbwv5nw" columns="enrollment_id" ref-table="enrollment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_c95kc42i2m6twc8vdusttqx58" columns="enrolled_students_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_c95kc42i2m6twc8vdusttqx58" unique="false" columns="enrolled_students_username"/>
+    </table>
     <table name="rating" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
       <column name="point" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="owner_username" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_hiqbq3ileuyexbygyrserf0es" columns="owner_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_22w5syr2qa2pqtfglf2dgc69u" table="course_ratings" schema="" catalog="ce_smart_tracker" columns="ratings_id"/>
+      <exported-key name="FK_b985rfon9fi1hvg5tj7x5dr7s" table="review_ratings" schema="" catalog="ce_smart_tracker" columns="ratings_id"/>
       <index name="FK_hiqbq3ileuyexbygyrserf0es" unique="false" columns="owner_username"/>
+    </table>
+    <table name="review" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="FK_qx5yuu3g3xkackyqups8eh7jy" table="course" schema="" catalog="ce_smart_tracker" columns="review_id"/>
+      <exported-key name="FK_a51l0ldhurewk439ahe93ojco" table="review_comments" schema="" catalog="ce_smart_tracker" columns="review_id"/>
+      <exported-key name="FK_btrqfvtqpbh04qugbk5anl8yd" table="review_ratings" schema="" catalog="ce_smart_tracker" columns="review_id"/>
+    </table>
+    <table name="review_comments" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="review_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="comments_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <foreign-key name="FK_a51l0ldhurewk439ahe93ojco" columns="review_id" ref-table="review" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_6gnd2v2kjgg3vu28j58jjob39" columns="comments_id" ref-table="comment" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="UK_6gnd2v2kjgg3vu28j58jjob39" unique="true" columns="comments_id"/>
+      <index name="FK_a51l0ldhurewk439ahe93ojco" unique="false" columns="review_id"/>
+    </table>
+    <table name="review_ratings" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="review_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="ratings_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <primary-key name="PRIMARY" columns="review_id,ratings_id"/>
+      <foreign-key name="FK_btrqfvtqpbh04qugbk5anl8yd" columns="review_id" ref-table="review" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_b985rfon9fi1hvg5tj7x5dr7s" columns="ratings_id" ref-table="rating" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="UK_b985rfon9fi1hvg5tj7x5dr7s" unique="true" columns="ratings_id"/>
+    </table>
+    <table name="score_book" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
+      <column name="owner_username" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FK_jbbwfbpuie7lbgxo3d8eqnyrj" columns="owner_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="FK_hkdxfu15xqmqbsr2ue6998302" table="assignment_score_books" schema="" catalog="ce_smart_tracker" columns="score_books_id"/>
+      <exported-key name="FK_a5l67r1xh8ngxiuaml361p44h" table="score_book_assignments" schema="" catalog="ce_smart_tracker" columns="score_book_id"/>
+      <index name="FK_jbbwfbpuie7lbgxo3d8eqnyrj" unique="false" columns="owner_username"/>
+    </table>
+    <table name="score_book_assignments" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="score_book_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="assignments_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="score_book_id,assignments_id"/>
+      <foreign-key name="FK_a5l67r1xh8ngxiuaml361p44h" columns="score_book_id" ref-table="score_book" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_6t2le942j3g44mhgqpfg540dv" columns="assignments_id" ref-table="assignment_score" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="UK_6t2le942j3g44mhgqpfg540dv" unique="true" columns="assignments_id"/>
     </table>
     <table name="student" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="student_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="username"/>
       <foreign-key name="FK_jyet50p17q01ks2bv4sn8i5r7" columns="username" ref-table="user" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_rwmw3nm0duh4vuns2q4x756mg" table="assignment_book" schema="" catalog="ce_smart_tracker" columns="owner_username"/>
       <exported-key name="FK_8v6w9twduqfuhsc298ky52cyh" table="comment" schema="" catalog="ce_smart_tracker" columns="owner_username"/>
-      <exported-key name="FK_re6veqmo60eo3b3wao4fstoxd" table="course_enrolled_students" schema="" catalog="ce_smart_tracker" columns="enrolled_students_username"/>
+      <exported-key name="FK_c95kc42i2m6twc8vdusttqx58" table="enrollment_enrolled_students" schema="" catalog="ce_smart_tracker" columns="enrolled_students_username"/>
       <exported-key name="FK_hiqbq3ileuyexbygyrserf0es" table="rating" schema="" catalog="ce_smart_tracker" columns="owner_username"/>
+      <exported-key name="FK_jbbwfbpuie7lbgxo3d8eqnyrj" table="score_book" schema="" catalog="ce_smart_tracker" columns="owner_username"/>
+      <exported-key name="FK_v0a4wv50iumo6llr0sya5e7t" table="student_enrolled_courses" schema="" catalog="ce_smart_tracker" columns="student_username"/>
+    </table>
+    <table name="student_enrolled_courses" schema="" catalog="ce_smart_tracker" type="TABLE">
+      <column name="student_username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="enrolled_courses_courseId" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="student_username,enrolled_courses_courseId"/>
+      <foreign-key name="FK_v0a4wv50iumo6llr0sya5e7t" columns="student_username" ref-table="student" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="username" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_av44lcct66ye4ym30ap9r9a7k" columns="enrolled_courses_courseId" ref-table="course" ref-schema="" ref-catalog="ce_smart_tracker" ref-columns="course_id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_av44lcct66ye4ym30ap9r9a7k" unique="false" columns="enrolled_courses_courseId"/>
     </table>
     <table name="teacher" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
@@ -165,13 +199,13 @@
     <table name="user" schema="" catalog="ce_smart_tracker" type="TABLE">
       <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="department" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="facebook_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="faculty" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="first_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="last_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="salt" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="session_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="facebook_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="username"/>
       <exported-key name="FK_jyet50p17q01ks2bv4sn8i5r7" table="student" schema="" catalog="ce_smart_tracker" columns="username"/>
       <exported-key name="FK_977gims1kvtfisrbhq4e3g23j" table="teacher" schema="" catalog="ce_smart_tracker" columns="username"/>

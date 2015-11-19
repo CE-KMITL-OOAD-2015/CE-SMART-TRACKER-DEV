@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="teacher")
 public class Teacher extends User
 {
     @JsonIgnore

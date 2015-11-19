@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "course")
 public class Course
 {
     /*@Id
@@ -31,28 +30,28 @@ public class Course
     private String courseTime;
 
     @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.ALL})
-    private Set<Student> enrolledStudents = new HashSet<>();
+    @OneToOne(cascade = {CascadeType.ALL})
+    private Enrollment enrollment = new Enrollment();
+
+    @JsonIgnore
+    @OneToOne(cascade = {CascadeType.ALL})
+    private Assignment assignment = new Assignment();
 
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL})
     private Set<Teacher> teachers = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL})
-    private Set<AssignmentBook> assignmentBooks = new HashSet<>();
+    @OneToOne(cascade = {CascadeType.ALL})
+    private Review review = new Review();
 
-    @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL})
-    private Set<AssignmentDescription> assignmentDescriptions = new HashSet<>();
-
-    @JsonIgnore
+    /*@JsonIgnore
     @OneToMany(cascade = {CascadeType.ALL})
     private Set<Rating> ratings = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.ALL})
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();*/
 
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.ALL})
@@ -60,200 +59,104 @@ public class Course
 
     public void addAnnouncement(Teacher teacher, String title, String description)
     {
-        Announcement announcement = new Announcement();
-        announcement.setTitle(title);
-        announcement.setDescription(description);
-        announcement.setAnnouncer(teacher);
+        Announcement announcement = new Announcement(title, description, teacher);
         announcements.add(announcement);
     }
 
     public void enroll(Student student)
     {
-        enrolledStudents.add(student);
-        AssignmentBook assignmentBook = new AssignmentBook(student);
-        for(AssignmentDescription ad : assignmentDescriptions)
-        {
-            assignmentBook.createAssignment(ad);
-        }
-        this.assignmentBooks.add(assignmentBook);
+        assignment.createScoreBook(student);
+        enrollment.enroll(student);
+        student.getEnrolledCourses().add(this);
     }
 
-    public boolean addAssignment(String title, String description, double maxScore, DateTime dateTime)
+    public void drop(Student student)
     {
-        AssignmentDescription assignmentDescription = new AssignmentDescription();
-        assignmentDescription.setTitle(title);
-        assignmentDescription.setDescription(description);
-        assignmentDescription.setMaxScore(maxScore);
-        assignmentDescription.setDueDate(dateTime);
-        if(isAssignmentDescriptionExists(assignmentDescription))
-        {
-            return false;
-        }
-        else
-        {
-            assignmentDescriptions.add(assignmentDescription);
-            for (AssignmentBook ab : assignmentBooks)
-            {
-                ab.createAssignment(assignmentDescription);
-            }
-            return true;
-        }
+        assignment.drop(student);
+        enrollment.drop(student);
+        student.getEnrolledCourses().remove(this);
     }
 
-    public boolean isEnrolled(Student student)
+    public boolean isEnrolledBy(Student student)
     {
-        return enrolledStudents.contains(student);
+        return enrollment.isEnrolledBy(student);
     }
 
-    public boolean isAssignmentDescriptionExists(AssignmentDescription assignmentDescription)
-    {
-        for(AssignmentDescription ad : assignmentDescriptions)
-        {
-            if(ad.equals(assignmentDescription))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isTeaching(Teacher teacher)
+    public boolean isTeachingBy(Teacher teacher)
     {
         return teachers.contains(teacher);
     }
 
     public void addRating(Student student, int point)
     {
-        // limit point to 0 - 10
-        if(point > 10)
-            point = 10;
-        else if(point < 0)
-            point = 0;
-
-        // update rating if already rated
-        for(Rating rating : ratings)
-        {
-            if(rating.getOwner().getUsername().equals(student.getUsername()))
-            {
-                rating.setPoint(point);
-                return;
-            }
-        }
-
-        // otherwise create new rating object
-        Rating rating = new Rating();
-        rating.setOwner(student);
-        rating.setPoint(point);
-        ratings.add(rating);
-    }
-
-    public boolean isRated(Student student)
-    {
-        for(Rating rating : ratings)
-        {
-            if(rating.getOwner().getUsername().equals(student.getUsername()))
-            {
-                return true;
-            }
-        }
-        return false;
+        review.addRating(student, point);
     }
 
     public boolean isCommented(Student student)
     {
-        for(Comment comment : comments)
-        {
-            if(comment.getOwner().getUsername().equals(student.getUsername()))
-            {
-                return true;
-            }
-        }
-        return false;
+        return review.isCommented(student);
     }
 
     public double getAverageRating()
     {
-        int sum = 0;
-        int count = 0;
-        for(Rating rating : ratings)
-        {
-            sum += rating.getPoint();
-            count += 1;
-        }
-        if(count > 0)
-        {
-            return ((double)sum)/count;
-        }
-        else
-        {
-            return 0;
-        }
+        return review.getAverageRating();
     }
 
     public void addComment(Student student, String message)
     {
-        Comment comment = new Comment();
-        comment.setOwner(student);
-        comment.setMessage(message);
-        comments.add(comment);
+        review.addComment(student, message);
     }
 
-    public void drop(Student student)
+    public ScoreBook getAssignmentBookByStudent(Student student)
     {
-        for(AssignmentBook assignmentBook : assignmentBooks)
-        {
-            if(assignmentBook.getOwner().equals(student))
-            {
-                assignmentBooks.remove(assignmentBook);
-                break;
-            }
-        }
-        enrolledStudents.remove(student);
+        return this.assignment.getAssignmentBookByStudent(student);
+    }
+
+    public boolean addAssignment(String title, String description, double maxScore, DateTime dateTime)
+    {
+        return this.assignment.addAssignment(title, description, maxScore, dateTime);
     }
 
     public boolean updateAssignmentScore(Student student, String title, double score)
     {
-        AssignmentBook assignmentBook = getAssignmentBookByStudent(student);
-        if(assignmentBook == null)
+        ScoreBook scoreBook = getAssignmentBookByStudent(student);
+        if(scoreBook == null)
         {
             return false;
         }
         else
         {
-            return assignmentBook.updateScoreByTitle(title, score);
+            return scoreBook.updateScoreByTitle(title, score);
         }
     }
 
-    public AssignmentBook getAssignmentBookByStudent(Student student)
+    @JsonIgnore
+    public Set<AssignmentDescription> getAssignmentDescriptions()
     {
-        if(student == null)
-        {
-            return null;
-        }
+        return this.assignment.getAssignmentDescriptions();
+    }
 
-        for(AssignmentBook assignmentBook : assignmentBooks)
-        {
-            if(assignmentBook.getOwner().equals(student))
-            {
-                return assignmentBook;
-            }
-        }
-        return null;
+    @JsonIgnore
+    public Set<ScoreBook> getScoreBooks()
+    {
+        return this.assignment.getScoreBooks();
+    }
+
+    @JsonIgnore
+    public Set<Student> getEnrolledStudents()
+    {
+        return this.enrollment.getEnrolledStudents();
+    }
+
+    @JsonIgnore
+    public Statistic getStatistic()
+    {
+        return new Statistic(this.assignment.getScoreBooks());
     }
 
     public List<Announcement> getAnnouncements()
     {
         return announcements;
-    }
-
-    public void setAnnouncements(List<Announcement> announcements)
-    {
-        this.announcements = announcements;
-    }
-
-    public void addTeacher(Teacher teacher)
-    {
-        teachers.add(teacher);
     }
 
     public String getCourseId()
@@ -326,7 +229,7 @@ public class Course
         this.courseTime = courseTime;
     }
 
-    public Set<Student> getEnrolledStudents()
+/*    public Set<Student> getEnrolledStudents()
     {
         return enrolledStudents;
     }
@@ -334,7 +237,7 @@ public class Course
     public void setEnrolledStudents(Set<Student> enrolledStudents)
     {
         this.enrolledStudents = enrolledStudents;
-    }
+    }*/
 
     public Set<Teacher> getTeachers()
     {
@@ -346,62 +249,10 @@ public class Course
         this.teachers = teachers;
     }
 
+    @JsonIgnore
     public List<Comment> getComments()
     {
-        return comments;
+        return review.getComments();
     }
 
-    public void setComments(List<Comment> comments)
-    {
-        this.comments = comments;
-    }
-
-    public Set<AssignmentBook> getAssignmentBooks()
-    {
-        return assignmentBooks;
-    }
-
-    public Set<AssignmentDescription> getAssignmentDescriptions()
-    {
-        return assignmentDescriptions;
-    }
-
-    /*
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof Course))
-        {
-            return false;
-        }
-        if (obj == this)
-        {
-            return true;
-        }
-
-        Course course2 = (Course) obj;
-        if(this.courseId == course2.getCourseId())
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    */
-
-    /*
-        public int getCourseDbId() {
-            return courseDbId;
-        }
-
-        public void setCourseDbId(int courseDbId) {
-            this.courseDbId = courseDbId;
-        }
-
-        public int getDb_id() {
-            return courseDbId;
-        }
-    */
 }

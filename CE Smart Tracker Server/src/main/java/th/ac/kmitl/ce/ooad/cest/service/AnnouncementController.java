@@ -29,6 +29,8 @@ public class AnnouncementController
     private StudentRepository studentRepository;
     @Autowired
     private UserRepository userRepository;
+    /*@Autowired
+    private Validator validator;*/
 
     @RequestMapping("/addAnnouncement")
     @ResponseBody
@@ -48,7 +50,7 @@ public class AnnouncementController
             Course course = courseRepository.findFirstByCourseId(courseId);
             if(course != null)
             {
-                if(course.isTeaching(teacher))
+                if(course.isTeachingBy(teacher))
                 {
                     course.addAnnouncement(teacher, title, description);
                     courseRepository.save(course);
@@ -91,11 +93,11 @@ public class AnnouncementController
         {
             return new ViewAnnouncementResponse(ResponseEnum.COURSE_NOT_FOUND);
         }
-        else if(student != null && !course.isEnrolled(student))
+        else if(student != null && !course.isEnrolledBy(student))
         {
             return new ViewAnnouncementResponse(ResponseEnum.NOT_ENROLLED);
         }
-        else if(teacher != null && !course.isTeaching(teacher))
+        else if(teacher != null && !course.isTeachingBy(teacher))
         {
             return new ViewAnnouncementResponse(ResponseEnum.NOT_TEACHING);
         }

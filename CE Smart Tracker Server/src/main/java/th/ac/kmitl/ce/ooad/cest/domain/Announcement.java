@@ -17,10 +17,18 @@ public class Announcement
     private String description;
     @ManyToOne
     private Teacher announcer;
-    private DateTime announceDate;
+    private final DateTime announceDate;
 
     public Announcement()
     {
+        announceDate = new DateTime();
+    }
+
+    public Announcement(String title, String description, Teacher announcer)
+    {
+        this.title = title;
+        this.description = description;
+        this.announcer = announcer;
         announceDate = new DateTime();
     }
 
